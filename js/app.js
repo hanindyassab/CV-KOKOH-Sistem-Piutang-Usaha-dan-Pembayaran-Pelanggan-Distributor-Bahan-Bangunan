@@ -1,15 +1,25 @@
 const demoData = {
+  products: [
+    { id: 'P-001', code: 'P-001', name: 'Semen Portland', category: 'Semen', unit: 'Sak', unitPrice: 85000, stockQty: 120 },
+    { id: 'P-002', code: 'P-002', name: 'Besi Beton', category: 'Besi', unit: 'Batang', unitPrice: 75000, stockQty: 85 },
+    { id: 'P-003', code: 'P-003', name: 'Cat Tembok', category: 'Cat', unit: 'Kaleng', unitPrice: 250000, stockQty: 40 },
+    { id: 'P-004', code: 'P-004', name: 'Pipa PVC', category: 'Pipa', unit: 'Batang', unitPrice: 45000, stockQty: 110 },
+    { id: 'P-005', code: 'P-005', name: 'Besi WF 8', category: 'Besi', unit: 'Batang', unitPrice: 180000, stockQty: 35 },
+    { id: 'P-006', code: 'P-006', name: 'Bata Merah', category: 'Bata', unit: 'Buah', unitPrice: 2600, stockQty: 5000 },
+    { id: 'P-007', code: 'P-007', name: 'Keramik', category: 'Keramik', unit: 'Dus', unitPrice: 42000, stockQty: 75 },
+    { id: 'P-008', code: 'P-008', name: 'Bata Ringan', category: 'Bata', unit: 'Buah', unitPrice: 3200, stockQty: 1800 }
+  ],
   customers: [
-    { id: 'C-001', name: 'CV. Bangun Jaya', address: 'Jl. Soekarno Hatta 88', phone: '0812-1111-2222', creditLimit: 150000000, status: 'Aktif' },
-    { id: 'C-002', name: 'PT. Maju Makmur', address: 'Jl. Gatsu 12', phone: '0812-3333-4444', creditLimit: 120000000, status: 'Aktif' },
-    { id: 'C-003', name: 'Toko Sinar Baru', address: 'Jl. Merdeka 45', phone: '0812-5555-6666', creditLimit: 90000000, status: 'Waspada' },
-    { id: 'C-004', name: 'UD. Karya Abadi', address: 'Jl. Riau 9', phone: '0812-7777-8888', creditLimit: 80000000, status: 'Aktif' }
+    { id: 'C-001', name: 'CV. Bangun Jaya', address: 'Jl. Soekarno Hatta 88', phone: '0812-7345-1086', npwp: '02.583.741.6-431.000', creditLimit: 150000000, status: 'Aktif' },
+    { id: 'C-002', name: 'PT. Maju Makmur', address: 'Jl. Gatsu 12', phone: '0813-2764-5198', npwp: '03.614.829.5-207.000', creditLimit: 120000000, status: 'Aktif' },
+    { id: 'C-003', name: 'Toko Sinar Baru', address: 'Jl. Merdeka 45', phone: '0821-6483-2075', npwp: '04.729.185.3-614.000', creditLimit: 90000000, status: 'Waspada' },
+    { id: 'C-004', name: 'UD. Karya Abadi', address: 'Jl. Riau 9', phone: '0857-3916-8420', npwp: '05.836.294.7-152.000', creditLimit: 80000000, status: 'Aktif' }
   ],
   invoices: [
-    { id: 'INV-1001', customerId: 'C-001', invoiceDate: '2026-08-01', dueDate: '2026-08-30', total: 24000000, items: [{ name: 'Semen Portland', qty: 400, unitPrice: 45000 }, { name: 'Besi WF 8', qty: 100, unitPrice: 180000 }] },
-    { id: 'INV-1002', customerId: 'C-002', invoiceDate: '2026-08-15', dueDate: '2026-09-14', total: 18000000, items: [{ name: 'Cat Tembok', qty: 150, unitPrice: 70000 }, { name: 'Bata Merah', qty: 5000, unitPrice: 2600 }] },
-    { id: 'INV-1003', customerId: 'C-003', invoiceDate: '2026-07-10', dueDate: '2026-08-09', total: 32000000, items: [{ name: 'Pipa PVC', qty: 200, unitPrice: 90000 }, { name: 'Keramik', qty: 600, unitPrice: 42000 }] },
-    { id: 'INV-1004', customerId: 'C-004', invoiceDate: '2026-09-02', dueDate: '2026-10-02', total: 12500000, items: [{ name: 'Bata Ringan', qty: 3000, unitPrice: 3200 }] }
+    { id: 'INV-1001', customerId: 'C-001', invoiceDate: '2026-08-01', dueDate: '2026-08-30', total: 24000000, items: [{ productId: 'P-001', name: 'Semen Portland', qty: 400, unitPrice: 45000 }, { productId: 'P-005', name: 'Besi WF 8', qty: 100, unitPrice: 180000 }] },
+    { id: 'INV-1002', customerId: 'C-002', invoiceDate: '2026-08-15', dueDate: '2026-09-14', total: 18000000, items: [{ productId: 'P-003', name: 'Cat Tembok', qty: 150, unitPrice: 70000 }, { productId: 'P-006', name: 'Bata Merah', qty: 5000, unitPrice: 2600 }] },
+    { id: 'INV-1003', customerId: 'C-003', invoiceDate: '2026-07-10', dueDate: '2026-08-09', total: 32000000, items: [{ productId: 'P-004', name: 'Pipa PVC', qty: 200, unitPrice: 90000 }, { productId: 'P-007', name: 'Keramik', qty: 600, unitPrice: 42000 }] },
+    { id: 'INV-1004', customerId: 'C-004', invoiceDate: '2026-09-02', dueDate: '2026-10-02', total: 12500000, items: [{ productId: 'P-008', name: 'Bata Ringan', qty: 3000, unitPrice: 3200 }] }
   ],
   payments: [
     { id: 'PAY-1', invoiceId: 'INV-1001', paymentDate: '2026-08-08', amount: 12000000 },
@@ -20,9 +30,14 @@ const demoData = {
 
 (function () {
   const state = JSON.parse(JSON.stringify(demoData));
+  let productPriceSort = 0;
 
   function getCustomerById(id) {
     return state.customers.find((customer) => customer.id === id) || null;
+  }
+
+  function getProductById(id) {
+    return state.products.find((product) => product.id === id) || null;
   }
 
   function getPaymentsByInvoice(invoiceId) {
@@ -33,12 +48,22 @@ const demoData = {
     return getPaymentsByInvoice(invoiceId).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
   }
 
+  function getPaymentDiscount(payment) {
+    return Number(payment.discount ?? payment.discount_applied ?? payment.discountApplied ?? 0);
+  }
+
+  function getTotalSettled(invoiceId) {
+    return getPaymentsByInvoice(invoiceId).reduce((sum, payment) => {
+      return sum + Number(payment.amount || 0) + getPaymentDiscount(payment);
+    }, 0);
+  }
+
   function getInvoiceStatus(invoice) {
-    const totalPaid = getTotalPaid(invoice.id);
-    const remaining = invoice.total - totalPaid;
+    const totalSettled = getTotalSettled(invoice.id);
+    const remaining = invoice.total - totalSettled;
 
     if (remaining <= 0) return { text: 'Lunas', className: 'status-lunas' };
-    if (totalPaid > 0) return { text: 'Sebagian Dibayar', className: 'status-sebagian' };
+    if (totalSettled > 0) return { text: 'Sebagian Dibayar', className: 'status-sebagian' };
 
     const dueDate = new Date(invoice.dueDate);
     const today = new Date();
@@ -53,6 +78,16 @@ const demoData = {
       currency: 'IDR',
       maximumFractionDigits: 0
     }).format(Number(value || 0));
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[character]);
   }
 
   function getCompanyDebtAlerts() {
@@ -86,17 +121,19 @@ const demoData = {
       .map((invoice) => {
         const customer = getCustomerById(invoice.customerId);
         const totalPaid = getTotalPaid(invoice.id);
-        const outstanding = Math.max(invoice.total - totalPaid, 0);
+        const totalDiscount = getPaymentsByInvoice(invoice.id).reduce((sum, payment) => sum + getPaymentDiscount(payment), 0);
+        const outstanding = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
         const status = getInvoiceStatus(invoice);
         return {
           invoice,
           customer,
           totalPaid,
+          totalDiscount,
           outstanding,
           status
         };
       })
-      .filter((entry) => entry.outstanding > 0)
+      .filter((entry) => entry.outstanding > 0 || entry.totalDiscount > 0)
       .sort((a, b) => new Date(a.invoice.dueDate) - new Date(b.invoice.dueDate));
 
     const totalOutstanding = records.reduce((sum, entry) => sum + entry.outstanding, 0);
@@ -136,12 +173,13 @@ const demoData = {
                 <th>Jatuh Tempo</th>
                 <th>Total Invoice</th>
                 <th>Sudah Bayar</th>
+                <th>Diskon</th>
                 <th>Sisa Piutang</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              ${records.map(({ invoice, customer, totalPaid, outstanding, status }) => `
+              ${records.map(({ invoice, customer, totalPaid, totalDiscount, outstanding, status }) => `
                 <tr>
                   <td>${customer ? customer.name : '-'}</td>
                   <td>${invoice.id}</td>
@@ -149,6 +187,7 @@ const demoData = {
                   <td>${invoice.dueDate}</td>
                   <td>${formatCurrency(invoice.total)}</td>
                   <td>${formatCurrency(totalPaid)}</td>
+                  <td>${formatCurrency(totalDiscount)}</td>
                   <td>${formatCurrency(outstanding)}</td>
                   <td><span class="pill ${status.className === 'status-overdue' ? 'status overdue' : 'status'}">${status.text}</span></td>
                 </tr>
@@ -156,7 +195,7 @@ const demoData = {
             </tbody>
             <tfoot>
               <tr class="totals">
-                <td colspan="6">Total</td>
+                <td colspan="7">Total</td>
                 <td colspan="2">${formatCurrency(totalOutstanding)}</td>
               </tr>
             </tfoot>
@@ -177,17 +216,17 @@ const demoData = {
   }
 
   function renderDashboard() {
-    const outstanding = state.invoices.reduce((sum, invoice) => sum + (invoice.total - getTotalPaid(invoice.id)), 0);
+    const outstanding = state.invoices.reduce((sum, invoice) => sum + Math.max(invoice.total - getTotalSettled(invoice.id), 0), 0);
     const overdue = state.invoices
       .filter((invoice) => getInvoiceStatus(invoice).text === 'Overdue')
-      .reduce((sum, invoice) => sum + (invoice.total - getTotalPaid(invoice.id)), 0);
+      .reduce((sum, invoice) => sum + Math.max(invoice.total - getTotalSettled(invoice.id), 0), 0);
 
     const dueSoon = state.invoices
       .filter((invoice) => {
-        const remaining = Math.max(invoice.total - getTotalPaid(invoice.id), 0);
+        const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
         return remaining > 0 && new Date(invoice.dueDate) <= new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
       })
-      .reduce((sum, invoice) => sum + (invoice.total - getTotalPaid(invoice.id)), 0);
+      .reduce((sum, invoice) => sum + Math.max(invoice.total - getTotalSettled(invoice.id), 0), 0);
 
     const cards = [
       { label: 'Total Piutang', value: outstanding, type: 'currency' },
@@ -285,7 +324,7 @@ const demoData = {
       const rows = state.invoices
         .map((invoice) => {
           const customer = getCustomerById(invoice.customerId);
-          const remaining = Math.max(invoice.total - getTotalPaid(invoice.id), 0);
+          const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
           const status = getInvoiceStatus(invoice);
           return {
             invoice,
@@ -320,6 +359,7 @@ const demoData = {
         <td>${customer.name}</td>
         <td>${customer.address}</td>
         <td>${customer.phone}</td>
+        <td>${customer.npwp || '-'}</td>
         <td>${formatCurrency(customer.creditLimit)}</td>
         <td><span class="status-pill ${customer.status === 'Waspada' ? 'status-sebagian' : 'status-lunas'}">${customer.status}</span></td>
         <td>
@@ -331,6 +371,67 @@ const demoData = {
         </td>
       </tr>
     `).join('');
+  }
+
+  function renderProducts() {
+    const productGrid = document.getElementById('productGrid');
+    if (!productGrid) return;
+
+    const categories = [...new Set(state.products.map((product) => product.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'id'));
+    const categoryFilter = document.getElementById('productCategoryFilter');
+    const currentCategory = categoryFilter?.value || 'all';
+    if (categoryFilter) {
+      categoryFilter.innerHTML = '<option value="all">Semua kategori</option>' + categories.map((category) => `
+        <option value="${escapeHTML(category)}">${escapeHTML(category)}</option>
+      `).join('');
+      categoryFilter.value = categories.includes(currentCategory) ? currentCategory : 'all';
+    }
+
+    const highestPrice = state.products.reduce((highest, product) => Math.max(highest, Number(product.unitPrice || 0)), 0);
+    const lowestStock = state.products.reduce((lowest, product) => {
+      if (!lowest || Number(product.stockQty || 0) < Number(lowest.stockQty || 0)) return product;
+      return lowest;
+    }, null);
+    const productCountStat = document.getElementById('productCountStat');
+    const productCategoryStat = document.getElementById('productCategoryStat');
+    const productHighestPriceStat = document.getElementById('productHighestPriceStat');
+    const productLowestStockStat = document.getElementById('productLowestStockStat');
+    const productLowestStockNameStat = document.getElementById('productLowestStockNameStat');
+    if (productCountStat) productCountStat.textContent = String(state.products.length);
+    if (productCategoryStat) productCategoryStat.textContent = String(categories.length);
+    if (productHighestPriceStat) productHighestPriceStat.textContent = formatCurrency(highestPrice);
+    if (productLowestStockStat) productLowestStockStat.textContent = lowestStock ? `${Number(lowestStock.stockQty || 0)} ${lowestStock.unit}` : '-';
+    if (productLowestStockNameStat) productLowestStockNameStat.textContent = lowestStock?.name || 'Belum ada produk';
+
+    const query = document.getElementById('productSearchInput')?.value.trim().toLocaleLowerCase('id') || '';
+    const selectedCategory = categoryFilter?.value || 'all';
+    const visibleProducts = state.products
+      .filter((product) => selectedCategory === 'all' || product.category === selectedCategory)
+      .filter((product) => !query || `${product.code} ${product.name}`.toLocaleLowerCase('id').includes(query))
+      .sort((a, b) => productPriceSort * (Number(a.unitPrice || 0) - Number(b.unitPrice || 0)));
+
+    productGrid.innerHTML = visibleProducts.length ? visibleProducts.map((product, index) => `
+      <article class="product-row">
+        <div class="product-mark product-mark-${index % 4}" aria-hidden="true">${escapeHTML((product.category || product.name || 'P').slice(0, 1).toUpperCase())}</div>
+        <div class="product-main-info">
+          <strong>${escapeHTML(product.name)}</strong>
+          <span>${escapeHTML(product.code)} · ${escapeHTML(product.category)} · per ${escapeHTML(product.unit)}</span>
+          <strong class="product-price">${formatCurrency(product.unitPrice)}</strong>
+        </div>
+        <div class="product-stock-info">
+          <span class="product-stock-status ${Number(product.stockQty || 0) > 0 ? 'in-stock' : 'out-of-stock'}">${Number(product.stockQty || 0) > 0 ? 'Aktif' : 'Habis'}</span>
+          <span>${Number(product.stockQty || 0)} ${escapeHTML(product.unit)}</span>
+        </div>
+        <details class="product-row-actions">
+          <summary aria-label="Aksi ${escapeHTML(product.name)}">...</summary>
+          <div class="product-action-menu">
+            <button type="button" data-detail="product" data-id="${escapeHTML(product.id)}">Detail</button>
+            <button type="button" data-edit="product" data-id="${escapeHTML(product.id)}">Edit</button>
+            <button type="button" data-delete="product" data-id="${escapeHTML(product.id)}">Hapus</button>
+          </div>
+        </details>
+      </article>
+    `).join('') : '<p class="product-empty-state">Produk tidak ditemukan.</p>';
   }
 
   function getInvoiceSequence(customerId, invoiceId) {
@@ -442,12 +543,12 @@ const demoData = {
     const invoice = state.invoices.find((item) => item.id === invoiceId);
     if (!invoice || !paymentDate) return 0;
 
-    const invoiceDate = new Date(invoice.invoiceDate);
-    const paymentDay = new Date(paymentDate);
-    const daysFromInvoice = (paymentDay - invoiceDate) / (1000 * 60 * 60 * 24);
+    const invoiceDate = new Date(`${invoice.invoiceDate}T00:00:00`);
+    const paymentDay = new Date(`${paymentDate}T00:00:00`);
+    const daysFromInvoice = Math.floor((paymentDay - invoiceDate) / (1000 * 60 * 60 * 24));
 
-    if (daysFromInvoice <= 10 && paymentDay >= invoiceDate) {
-      return invoice.total * 0.02;
+    if (daysFromInvoice >= 0 && daysFromInvoice <= 10) {
+      return getInvoiceRemaining(invoiceId) * 0.02;
     }
 
     return 0;
@@ -456,7 +557,7 @@ const demoData = {
   function getInvoiceRemaining(invoiceId) {
     const invoice = state.invoices.find((item) => item.id === invoiceId);
     if (!invoice) return 0;
-    return Math.max(invoice.total - getTotalPaid(invoiceId), 0);
+    return Math.max(invoice.total - getTotalSettled(invoiceId), 0);
   }
 
   function updatePaymentMeta() {
@@ -525,10 +626,10 @@ const demoData = {
     const paymentDebtList = document.getElementById('paymentDebtList');
     if (!paymentDebtList) return;
 
-    const debtList = state.invoices
+    const debtGroups = state.invoices
       .map((invoice) => {
         const customer = getCustomerById(invoice.customerId);
-        const remaining = Math.max(invoice.total - getTotalPaid(invoice.id), 0);
+        const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
         return {
           invoice,
           customer,
@@ -536,11 +637,25 @@ const demoData = {
         };
       })
       .filter((entry) => entry.remaining > 0)
-      .slice(0, 6);
+      .reduce((groups, entry) => {
+        const customerId = entry.customer?.id || entry.invoice.customerId;
+        if (!groups.has(customerId)) {
+          groups.set(customerId, {
+            customer: entry.customer,
+            invoices: [],
+            totalOutstanding: 0
+          });
+        }
 
-    if (debtList.length === 0) {
+        const group = groups.get(customerId);
+        group.invoices.push(entry);
+        group.totalOutstanding += entry.remaining;
+        return groups;
+      }, new Map());
+
+    if (debtGroups.size === 0) {
       paymentDebtList.innerHTML = `
-        <div class="payment-debt-card">
+        <div class="payment-company-card">
           <h4>Tidak ada piutang</h4>
           <p class="summary-meta">Belum ada invoice aktif yang menunggak.</p>
         </div>
@@ -548,15 +663,28 @@ const demoData = {
       return;
     }
 
-    paymentDebtList.innerHTML = debtList.map(({ invoice, customer, remaining }) => `
-      <div class="payment-debt-card">
-        <h4>${customer ? customer.name : '-'}</h4>
-        <div class="meta-row"><span>Invoice</span><strong>${invoice.id}</strong></div>
-        <div class="meta-row"><span>Tempo</span><strong>${invoice.dueDate}</strong></div>
-        <div class="meta-row"><span>Sisa</span><strong>${formatCurrency(remaining)}</strong></div>
-        <div class="value-amount">${formatCurrency(invoice.total)}</div>
-        <button class="primary-btn small-btn" type="button" data-select-invoice="${invoice.id}">Pilih</button>
-      </div>
+    paymentDebtList.innerHTML = Array.from(debtGroups.values()).map(({ customer, invoices, totalOutstanding }) => `
+      <section class="payment-company-card">
+        <div class="payment-company-heading">
+          <h4>${escapeHTML(customer ? customer.name : 'Pelanggan tidak ditemukan')}</h4>
+          <div><span>Total piutang</span><strong>${formatCurrency(totalOutstanding)}</strong></div>
+        </div>
+        <div class="payment-company-invoices">
+          ${invoices.map(({ invoice, remaining }) => `
+            <div class="payment-invoice-row">
+              <div class="payment-invoice-identification">
+                <strong>${escapeHTML(invoice.id)}</strong>
+                <span>Jatuh tempo ${escapeHTML(invoice.dueDate)}</span>
+              </div>
+              <div class="payment-invoice-balance">
+                <span>Sisa piutang</span>
+                <strong>${formatCurrency(remaining)}</strong>
+              </div>
+              <button class="primary-btn small-btn" type="button" data-select-invoice="${escapeHTML(invoice.id)}">Catat Bayaran</button>
+            </div>
+          `).join('')}
+        </div>
+      </section>
     `).join('');
   }
 
@@ -569,45 +697,43 @@ const demoData = {
       const invoice = state.invoices.find((item) => item.id === payment.invoiceId);
       const customer = invoice ? getCustomerById(invoice.customerId) : null;
       const method = payment.method || 'Tunai';
+      const discount = getPaymentDiscount(payment);
       return `
         <div class="summary-item">
           <div class="summary-header">
             <strong>${invoice ? invoice.id : payment.invoiceId}</strong>
-            <button class="action-btn danger" data-delete="payment" data-id="${payment.id}">Hapus</button>
           </div>
-          <div class="summary-meta">${customer ? customer.name : '-'} • ${payment.paymentDate} • ${method}</div>
+          <div class="summary-meta">${escapeHTML(customer ? customer.name : '-')} • ${escapeHTML(payment.paymentDate)} • ${escapeHTML(method)}</div>
+          <div class="summary-meta">Diterima oleh: ${escapeHTML(payment.receivedBy || '-')}</div>
           <div class="summary-amount">Bayar: ${formatCurrency(payment.amount)}</div>
+          ${discount > 0 ? `<div class="summary-meta">Diskon diterapkan: ${formatCurrency(discount)}</div>` : ''}
+          ${payment.notes ? `<div class="summary-meta">Keterangan: ${escapeHTML(payment.notes)}</div>` : ''}
           <div class="summary-actions">
-            <button class="action-btn primary" data-detail="payment" data-id="${payment.id}">Detail</button>
+            <button class="action-btn primary" data-detail="payment" data-id="${escapeHTML(payment.id)}">Lihat Struk</button>
           </div>
         </div>
       `;
     }).join('');
   }
 
-  const invoiceItemPricing = {
-    'Semen Portland': 85000,
-    'Besi Beton': 75000,
-    'Cat Tembok': 250000,
-    'Pipa PVC': 45000
-  };
-
-  function buildInvoiceRow(item = { name: '', qty: 1, unitPrice: 0 }) {
-    const selectedValue = item.name || '';
-    const defaultPrice = invoiceItemPricing[selectedValue] ?? Number(item.unitPrice || 0);
+  function buildInvoiceRow(item = { productId: '', name: '', qty: 1, unitPrice: 0 }) {
+    const selectedProduct = getProductById(item.productId) || state.products.find((product) => product.name === item.name);
+    const defaultPrice = selectedProduct ? Number(selectedProduct.unitPrice) : Number(item.unitPrice || 0);
+    const productOptions = state.products.map((product) => `
+      <option value="${escapeHTML(product.id)}" ${selectedProduct?.id === product.id ? 'selected' : ''}>
+        ${escapeHTML(product.name)} - Stok ${Number(product.stockQty || 0)} ${escapeHTML(product.unit)}
+      </option>
+    `).join('');
     return `
       <tr>
         <td>
           <select class="item-name" aria-label="Nama item">
-            <option value="">Pilih item</option>
-            <option value="Semen Portland" ${selectedValue === 'Semen Portland' ? 'selected' : ''}>Semen Portland</option>
-            <option value="Besi Beton" ${selectedValue === 'Besi Beton' ? 'selected' : ''}>Besi Beton</option>
-            <option value="Cat Tembok" ${selectedValue === 'Cat Tembok' ? 'selected' : ''}>Cat Tembok</option>
-            <option value="Pipa PVC" ${selectedValue === 'Pipa PVC' ? 'selected' : ''}>Pipa PVC</option>
+            <option value="">Pilih produk</option>
+            ${productOptions}
           </select>
         </td>
         <td><input type="number" class="item-qty" min="1" step="1" value="${item.qty || 1}" /></td>
-        <td><input type="number" class="item-price" min="0" step="1000" value="${defaultPrice}" /></td>
+        <td><input type="number" class="item-price" min="0" step="1000" value="${defaultPrice}" readonly aria-label="Harga satuan dari katalog" /></td>
         <td class="item-subtotal">${formatCurrency((Number(item.qty || 0) || 0) * defaultPrice)}</td>
         <td><button type="button" class="action-btn danger remove-item-row">Hapus</button></td>
       </tr>
@@ -626,12 +752,14 @@ const demoData = {
       const nameInput = row.querySelector('.item-name');
       const qtyInput = row.querySelector('.item-qty');
       const priceInput = row.querySelector('.item-price');
+      const product = getProductById(nameInput?.value);
       const subtotalEl = row.querySelector('.item-subtotal');
       const qty = Number(qtyInput?.value || 0);
-      const price = Number(priceInput?.value || 0);
+      const price = Number(product?.unitPrice || 0);
       const subtotal = qty * price;
       total += subtotal;
 
+      if (priceInput) priceInput.value = price;
       if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
       if (nameInput && !nameInput.value && (qty > 0 || price > 0)) {
         nameInput.value = '';
@@ -649,10 +777,17 @@ const demoData = {
     if (!tableBody) return;
 
     if (tableBody.children.length === 0) {
-      tableBody.innerHTML = buildInvoiceRow({ name: 'Semen Portland', qty: 1, unitPrice: invoiceItemPricing['Semen Portland'] });
-      tableBody.insertAdjacentHTML('beforeend', buildInvoiceRow({ name: 'Besi Beton', qty: 2, unitPrice: invoiceItemPricing['Besi Beton'] }));
-      updateInvoiceItemRows();
+      tableBody.innerHTML = buildInvoiceRow({ qty: 1 });
+    } else {
+      const currentItems = Array.from(tableBody.querySelectorAll('tr')).map((row) => ({
+        productId: row.querySelector('.item-name')?.value || '',
+        qty: row.querySelector('.item-qty')?.value || 1,
+        unitPrice: row.querySelector('.item-price')?.value || 0
+      }));
+      tableBody.innerHTML = currentItems.map((item) => buildInvoiceRow(item)).join('');
     }
+
+    updateInvoiceItemRows();
   }
 
   function renderAging() {
@@ -672,7 +807,7 @@ const demoData = {
     const agingRows = [];
 
     state.invoices.forEach((invoice) => {
-      const remaining = Math.max(invoice.total - getTotalPaid(invoice.id), 0);
+      const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
       if (remaining <= 0) return;
 
       const dueDate = new Date(invoice.dueDate);
@@ -749,6 +884,24 @@ const demoData = {
     return `C-${String(nextNumber).padStart(3, '0')}`;
   }
 
+  function getNextProductId() {
+    const numericIds = state.products
+      .map((product) => Number(String(product.id).replace(/\D/g, '')))
+      .filter((number) => !Number.isNaN(number));
+
+    const nextNumber = numericIds.length ? Math.max(...numericIds) + 1 : 1;
+    return `P-${String(nextNumber).padStart(3, '0')}`;
+  }
+
+  function getNextProductCode() {
+    const numericCodes = state.products
+      .map((product) => Number(String(product.code).replace(/\D/g, '')))
+      .filter((number) => !Number.isNaN(number));
+
+    const nextNumber = numericCodes.length ? Math.max(...numericCodes) + 1 : 1;
+    return `P-${String(nextNumber).padStart(3, '0')}`;
+  }
+
   function getNextInvoiceId() {
     const numericIds = state.invoices
       .map((invoice) => Number(String(invoice.id).replace(/\D/g, '')))
@@ -820,15 +973,102 @@ const demoData = {
     if (modalType === 'customer') {
       const customer = getCustomerById(id);
       if (!customer) return;
+      const customerInvoices = state.invoices.filter((invoice) => invoice.customerId === customer.id);
+      const outstandingInvoices = customerInvoices
+        .map((invoice) => ({
+          invoice,
+          remaining: Math.max(Number(invoice.total || 0) - getTotalSettled(invoice.id), 0),
+          status: getInvoiceStatus(invoice)
+        }))
+        .filter((entry) => entry.remaining > 0)
+        .sort((a, b) => new Date(a.invoice.dueDate) - new Date(b.invoice.dueDate));
+      const totalOutstanding = outstandingInvoices.reduce((sum, entry) => sum + entry.remaining, 0);
+      const totalPaid = customerInvoices.reduce((sum, invoice) => sum + getTotalPaid(invoice.id), 0);
+      const creditLimit = Number(customer.creditLimit || 0);
+      const creditUsage = creditLimit > 0 ? Math.min((totalOutstanding / creditLimit) * 100, 100) : 0;
+      const recentPayments = state.payments
+        .filter((payment) => customerInvoices.some((invoice) => invoice.id === payment.invoiceId))
+        .sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate))
+        .slice(0, 5);
+      const initials = customer.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
       detailTitle.textContent = `Detail Pelanggan - ${customer.name}`;
       detailContent.innerHTML = `
+        <div class="customer-profile">
+          <div class="customer-profile-heading">
+            <div class="customer-avatar" aria-hidden="true">${escapeHTML(initials)}</div>
+            <div>
+              <h4>${escapeHTML(customer.name)}</h4>
+              <span class="status-pill ${customer.status === 'Waspada' ? 'status-sebagian' : 'status-lunas'}">${escapeHTML(customer.status)}</span>
+            </div>
+          </div>
+
+          <section class="customer-profile-section">
+            <h4>Informasi Pelanggan</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><label>ID Pelanggan</label><strong>${escapeHTML(customer.id)}</strong></div>
+              <div class="detail-item"><label>Telepon</label><strong>${escapeHTML(customer.phone || '-')}</strong></div>
+              <div class="detail-item"><label>Alamat</label><strong>${escapeHTML(customer.address || '-')}</strong></div>
+              <div class="detail-item"><label>NPWP</label><strong>${escapeHTML(customer.npwp || '-')}</strong></div>
+              <div class="detail-item"><label>Limit Kredit</label><strong>${formatCurrency(creditLimit)}</strong></div>
+            </div>
+          </section>
+
+          <section class="customer-profile-section">
+            <h4>Ringkasan Piutang</h4>
+            <div class="customer-metrics">
+              <div><span>Total invoice</span><strong>${customerInvoices.length} kali</strong></div>
+              <div><span>Total sisa piutang</span><strong class="customer-outstanding">${formatCurrency(totalOutstanding)}</strong></div>
+              <div><span>Total pembayaran</span><strong>${formatCurrency(totalPaid)}</strong></div>
+            </div>
+            <div class="credit-usage-heading"><span>Pemakaian limit kredit</span><strong>${formatCurrency(totalOutstanding)} / ${formatCurrency(creditLimit)}</strong></div>
+            <div class="credit-usage-track" role="img" aria-label="Pemakaian limit kredit ${Math.round(creditUsage)} persen"><span style="width:${creditUsage}%"></span></div>
+          </section>
+
+          <section class="customer-profile-section">
+            <div class="customer-section-heading"><h4>Invoice Belum Lunas</h4><span>${outstandingInvoices.length} invoice</span></div>
+            ${outstandingInvoices.length ? `
+              <div class="customer-invoice-list">
+                ${outstandingInvoices.map(({ invoice, remaining, status }) => `
+                  <div class="customer-invoice-row">
+                    <div><strong>${escapeHTML(invoice.id)}</strong><span>Jatuh tempo ${escapeHTML(invoice.dueDate)}</span></div>
+                    <div class="customer-invoice-balance"><strong>${formatCurrency(remaining)}</strong><span class="status-pill ${status.className}">${escapeHTML(status.text)}</span></div>
+                    <button type="button" class="action-btn primary" data-detail="invoice" data-id="${escapeHTML(invoice.id)}">Detail</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<p class="customer-empty-state">Tidak ada invoice yang belum lunas.</p>'}
+          </section>
+
+          <section class="customer-profile-section">
+            <div class="customer-section-heading"><h4>Riwayat Pembayaran</h4><span>${recentPayments.length} terakhir</span></div>
+            ${recentPayments.length ? `
+              <div class="customer-payment-list">
+                ${recentPayments.map((payment) => `
+                  <div class="customer-payment-row">
+                    <div><strong>${escapeHTML(payment.invoiceId)}</strong><span>${escapeHTML(payment.paymentDate)} · ${escapeHTML(payment.method || 'Tunai')}</span></div>
+                    <strong>${formatCurrency(payment.amount)}</strong>
+                    <button type="button" class="action-btn primary" data-detail="payment" data-id="${escapeHTML(payment.id)}">Detail</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<p class="customer-empty-state">Belum ada pembayaran tercatat.</p>'}
+          </section>
+        </div>
+      `;
+    }
+
+    if (modalType === 'product') {
+      const product = getProductById(id);
+      if (!product) return;
+      detailTitle.textContent = `Detail Produk - ${product.name}`;
+      detailContent.innerHTML = `
         <div class="detail-grid">
-          <div class="detail-item"><label>ID</label><strong>${customer.id}</strong></div>
-          <div class="detail-item"><label>Status</label><strong>${customer.status}</strong></div>
-          <div class="detail-item"><label>Nama</label><strong>${customer.name}</strong></div>
-          <div class="detail-item"><label>Telepon</label><strong>${customer.phone}</strong></div>
-          <div class="detail-item"><label>Alamat</label><strong>${customer.address}</strong></div>
-          <div class="detail-item"><label>Limit Kredit</label><strong>${formatCurrency(customer.creditLimit)}</strong></div>
+          <div class="detail-item"><label>Kode Produk</label><strong>${escapeHTML(product.code)}</strong></div>
+          <div class="detail-item"><label>Nama Produk</label><strong>${escapeHTML(product.name)}</strong></div>
+          <div class="detail-item"><label>Kategori</label><strong>${escapeHTML(product.category)}</strong></div>
+          <div class="detail-item"><label>Satuan</label><strong>${escapeHTML(product.unit)}</strong></div>
+          <div class="detail-item"><label>Harga Satuan</label><strong>${formatCurrency(product.unitPrice)}</strong></div>
+          <div class="detail-item"><label>Stok</label><strong>${Number(product.stockQty || 0)} ${escapeHTML(product.unit)}</strong></div>
         </div>
       `;
     }
@@ -839,18 +1079,54 @@ const demoData = {
       const customer = getCustomerById(invoice.customerId);
       const status = getInvoiceStatus(invoice);
       const totalPaid = getTotalPaid(invoice.id);
+      const totalDiscount = getPaymentsByInvoice(invoice.id).reduce((sum, payment) => sum + getPaymentDiscount(payment), 0);
+      const invoiceItems = invoice.items || [];
+      const itemSubtotal = invoiceItems.reduce((sum, item) => sum + Number(item.qty || 0) * Number(item.unitPrice || 0), 0);
+      const shippingCost = Number(invoice.shippingCost || 0);
+      const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
       detailTitle.textContent = `Detail Invoice - ${invoice.id}`;
       detailContent.innerHTML = `
-        <div class="detail-grid">
-          <div class="detail-item"><label>No. Invoice</label><strong>${invoice.id}</strong></div>
-          <div class="detail-item"><label>Invoice ke</label><strong>${getInvoiceSequence(invoice.customerId, invoice.id)}</strong></div>
-          <div class="detail-item"><label>Status</label><strong>${status.text}</strong></div>
-          <div class="detail-item"><label>Pelanggan</label><strong>${customer ? customer.name : '-'}</strong></div>
-          <div class="detail-item"><label>Tanggal Invoice</label><strong>${invoice.invoiceDate}</strong></div>
-          <div class="detail-item"><label>Jatuh Tempo</label><strong>${invoice.dueDate}</strong></div>
-          <div class="detail-item"><label>Total</label><strong>${formatCurrency(invoice.total)}</strong></div>
-          <div class="detail-item"><label>Sudah Dibayar</label><strong>${formatCurrency(totalPaid)}</strong></div>
-          <div class="detail-item"><label>Sisa Piutang</label><strong>${formatCurrency(Math.max(invoice.total - totalPaid, 0))}</strong></div>
+        <div class="invoice-detail-view">
+          <div class="invoice-detail-meta">
+            <div><span>Invoice</span><strong>${escapeHTML(invoice.id)}</strong></div>
+            <div><span>Tanggal</span><strong>${escapeHTML(invoice.invoiceDate)}</strong></div>
+            <div><span>Jatuh tempo</span><strong>${escapeHTML(invoice.dueDate)}</strong></div>
+            <div><span>Status</span><strong><span class="status-pill ${status.className}">${escapeHTML(status.text)}</span></strong></div>
+          </div>
+
+          <section class="invoice-detail-customer">
+            <strong>Pelanggan</strong>
+            <span>${escapeHTML(customer ? customer.name : '-')}</span>
+            <span>${escapeHTML(customer ? customer.address : '-')}</span>
+            <span>${escapeHTML(customer ? customer.phone : '-')}</span>
+          </section>
+
+          <div class="invoice-detail-table-wrap">
+            <table class="invoice-detail-table">
+              <thead>
+                <tr><th>Item</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody>
+                ${invoiceItems.map((item) => `
+                  <tr>
+                    <td>${escapeHTML(item.name || '-')}</td>
+                    <td>${Number(item.qty || 0)}</td>
+                    <td>${formatCurrency(item.unitPrice)}</td>
+                    <td>${formatCurrency(Number(item.qty || 0) * Number(item.unitPrice || 0))}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="invoice-detail-summary">
+            <div><span>Subtotal Barang</span><strong>${formatCurrency(itemSubtotal)}</strong></div>
+            <div><span>Ongkos Kirim</span><strong>${formatCurrency(shippingCost)}</strong></div>
+            <div class="invoice-detail-total"><span>Total Tagihan</span><strong>${formatCurrency(invoice.total)}</strong></div>
+            <div><span>Sudah Dibayar</span><strong>${formatCurrency(totalPaid)}</strong></div>
+            <div><span>Diskon Diterapkan</span><strong>${formatCurrency(totalDiscount)}</strong></div>
+            <div><span>Sisa Piutang</span><strong>${formatCurrency(remaining)}</strong></div>
+          </div>
         </div>
       `;
     }
@@ -860,15 +1136,28 @@ const demoData = {
       if (!payment) return;
       const invoice = state.invoices.find((item) => item.id === payment.invoiceId);
       const customer = invoice ? getCustomerById(invoice.customerId) : null;
-      detailTitle.textContent = `Detail Pembayaran - ${payment.id}`;
+      const discount = getPaymentDiscount(payment);
+      const settlementAmount = Number(payment.amount || 0) + discount;
+      const remaining = invoice ? Math.max(invoice.total - getTotalSettled(invoice.id), 0) : 0;
+      detailTitle.textContent = `Struk Pembayaran - ${payment.id}`;
       detailContent.innerHTML = `
-        <div class="detail-grid">
-          <div class="detail-item"><label>ID Pembayaran</label><strong>${payment.id}</strong></div>
-          <div class="detail-item"><label>Invoice</label><strong>${payment.invoiceId}</strong></div>
-          <div class="detail-item"><label>Pelanggan</label><strong>${customer ? customer.name : '-'}</strong></div>
-          <div class="detail-item"><label>Tanggal</label><strong>${payment.paymentDate}</strong></div>
-          <div class="detail-item"><label>Nominal</label><strong>${formatCurrency(payment.amount)}</strong></div>
-          <div class="detail-item"><label>Diskon</label><strong>${formatCurrency(getDiscountOnPayment(payment.invoiceId, payment.paymentDate))}</strong></div>
+        <div class="payment-receipt">
+          <div class="payment-receipt-heading">
+            <span>BUKTI PENERIMAAN PEMBAYARAN</span>
+            <strong>${escapeHTML(payment.id)}</strong>
+          </div>
+          <div class="payment-receipt-lines">
+            <div><span>Perusahaan</span><strong>${escapeHTML(customer ? customer.name : '-')}</strong></div>
+            <div><span>Invoice</span><strong>${escapeHTML(payment.invoiceId)}</strong></div>
+            <div><span>Tanggal pembayaran</span><strong>${escapeHTML(payment.paymentDate)}</strong></div>
+            <div><span>Metode</span><strong>${escapeHTML(payment.method || 'Tunai')}</strong></div>
+            <div><span>Diterima oleh</span><strong>${escapeHTML(payment.receivedBy || '-')}</strong></div>
+            <div class="receipt-amount-line"><span>Uang diterima</span><strong>${formatCurrency(payment.amount)}</strong></div>
+            <div><span>Diskon diterapkan</span><strong>${formatCurrency(discount)}</strong></div>
+            <div class="receipt-total-line"><span>Total pelunasan</span><strong>${formatCurrency(settlementAmount)}</strong></div>
+            <div><span>Sisa piutang invoice</span><strong>${formatCurrency(remaining)}</strong></div>
+            <div class="payment-receipt-notes"><span>Keterangan</span><p>${escapeHTML(payment.notes || 'Tidak ada keterangan')}</p></div>
+          </div>
         </div>
       `;
     }
@@ -882,7 +1171,10 @@ const demoData = {
 
     const customer = getCustomerById(invoice.customerId);
     const totalPaid = getTotalPaid(invoice.id);
-    const remaining = Math.max(invoice.total - totalPaid, 0);
+    const totalDiscount = getPaymentsByInvoice(invoice.id).reduce((sum, payment) => sum + getPaymentDiscount(payment), 0);
+    const remaining = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
+    const itemSubtotal = invoice.items.reduce((sum, item) => sum + Number(item.qty || 0) * Number(item.unitPrice || 0), 0);
+    const shippingCost = Number(invoice.shippingCost || 0);
     const html = `
       <html>
         <head>
@@ -938,8 +1230,11 @@ const demoData = {
           </div>
 
           <div class="box">
+            <div>Subtotal Barang: <strong>${formatCurrency(itemSubtotal)}</strong></div>
+            <div>Ongkos Kirim: <strong>${formatCurrency(shippingCost)}</strong></div>
             <div>Total Tagihan: <strong>${formatCurrency(invoice.total)}</strong></div>
             <div>Sudah Dibayar: <strong>${formatCurrency(totalPaid)}</strong></div>
+            <div>Diskon Diterapkan: <strong>${formatCurrency(totalDiscount)}</strong></div>
             <div>Sisa Piutang: <strong>${formatCurrency(remaining)}</strong></div>
           </div>
         </body>
@@ -995,6 +1290,30 @@ const demoData = {
     document.getElementById('customerNwp').value = customer.npwp || '';
     document.getElementById('customerLimit').value = customer.creditLimit;
     document.getElementById('customerStatus').value = customer.status;
+  }
+
+  function setProductFormMode(product = null) {
+    const form = document.getElementById('productForm');
+    const editId = document.getElementById('productEditId');
+    const modalTitle = document.getElementById('productModalTitle');
+    if (!form || !editId) return;
+
+    form.reset();
+    if (!product) {
+      editId.value = '';
+      document.getElementById('productCode').value = getNextProductCode();
+      document.getElementById('productModalTitle').textContent = 'Tambah Produk Baru';
+      return;
+    }
+
+    editId.value = product.id;
+    if (modalTitle) modalTitle.textContent = 'Edit Produk';
+    document.getElementById('productCode').value = product.code;
+    document.getElementById('productName').value = product.name;
+    document.getElementById('productCategory').value = product.category;
+    document.getElementById('productUnit').value = product.unit;
+    document.getElementById('productPrice').value = product.unitPrice;
+    document.getElementById('productStock').value = product.stockQty;
   }
 
   function openPaymentEntryModal(invoiceId = null) {
@@ -1053,6 +1372,15 @@ const demoData = {
 
       const editButton = event.target.closest('[data-edit]');
       if (editButton) {
+        if (editButton.dataset.edit === 'product') {
+          const product = getProductById(editButton.dataset.id);
+          if (product) {
+            setProductFormMode(product);
+            openModal('productModal');
+          }
+          return;
+        }
+
         const customer = getCustomerById(editButton.dataset.id);
         if (customer) {
           setCustomerFormMode(customer);
@@ -1073,24 +1401,35 @@ const demoData = {
           state.customers = state.customers.filter((item) => item.id !== id);
         }
 
+        if (type === 'product') {
+          const product = getProductById(id);
+          if (!product) return;
+          const usedByInvoice = state.invoices.some((invoice) => invoice.items.some((item) => item.productId === id));
+          if (usedByInvoice) {
+            alert(`Produk ${product.name} sudah digunakan pada invoice dan tidak dapat dihapus.`);
+            return;
+          }
+          if (!window.confirm(`Hapus produk ${product.name}?`)) return;
+          state.products = state.products.filter((item) => item.id !== id);
+        }
+
         if (type === 'invoice') {
           const invoice = state.invoices.find((item) => item.id === id);
           if (!invoice) return;
           const confirmed = window.confirm(`Hapus invoice ${invoice.id}?`);
           if (!confirmed) return;
+          if (invoice.stockApplied) {
+            invoice.items.forEach((item) => {
+              const product = getProductById(item.productId);
+              if (product) product.stockQty = Number(product.stockQty || 0) + Number(item.qty || 0);
+            });
+          }
           state.invoices = state.invoices.filter((item) => item.id !== id);
           state.payments = state.payments.filter((payment) => payment.invoiceId !== id);
         }
 
-        if (type === 'payment') {
-          const payment = state.payments.find((item) => item.id === id);
-          if (!payment) return;
-          const confirmed = window.confirm(`Hapus pembayaran ${payment.id}?`);
-          if (!confirmed) return;
-          state.payments = state.payments.filter((item) => item.id !== id);
-        }
-
         renderCustomers();
+        renderProducts();
         renderInvoices();
         renderDashboard();
         renderAging();
@@ -1114,6 +1453,26 @@ const demoData = {
         openModal('customerModal');
       });
     }
+
+    const addProductBtn = document.getElementById('addProductBtn');
+    if (addProductBtn) {
+      addProductBtn.addEventListener('click', () => {
+        setProductFormMode();
+        openModal('productModal');
+      });
+    }
+
+    const productSearchInput = document.getElementById('productSearchInput');
+    const productCategoryFilter = document.getElementById('productCategoryFilter');
+    const productSortBtn = document.getElementById('productSortBtn');
+    productSearchInput?.addEventListener('input', renderProducts);
+    productCategoryFilter?.addEventListener('change', renderProducts);
+    productSortBtn?.addEventListener('click', () => {
+      productPriceSort = productPriceSort === 1 ? -1 : 1;
+      productSortBtn.textContent = productPriceSort === 1 ? 'Harga: terendah' : 'Harga: tertinggi';
+      productSortBtn.setAttribute('aria-pressed', 'true');
+      renderProducts();
+    });
 
     const addInvoiceBtn = document.getElementById('addInvoiceBtn');
     if (addInvoiceBtn) {
@@ -1230,7 +1589,7 @@ const demoData = {
     }
 
     document.body.addEventListener('input', (event) => {
-      if (event.target.closest('.item-qty, .item-price, .item-name')) {
+      if (event.target.closest('.item-qty, .item-price, .item-name, #shippingCost')) {
         updateInvoiceItemRows();
       }
     });
@@ -1238,10 +1597,10 @@ const demoData = {
     document.body.addEventListener('change', (event) => {
       const nameInput = event.target.closest('.item-name');
       if (nameInput) {
-        const selectedName = nameInput.value;
+        const selectedProduct = getProductById(nameInput.value);
         const priceInput = nameInput.closest('tr')?.querySelector('.item-price');
-        if (selectedName && priceInput && invoiceItemPricing[selectedName]) {
-          priceInput.value = invoiceItemPricing[selectedName];
+        if (priceInput) {
+          priceInput.value = selectedProduct?.unitPrice || 0;
         }
         updateInvoiceItemRows();
       }
@@ -1306,6 +1665,45 @@ const demoData = {
       });
     }
 
+    const productForm = document.getElementById('productForm');
+    if (productForm) {
+      productForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const editId = document.getElementById('productEditId').value;
+        const code = document.getElementById('productCode').value.trim();
+        const name = document.getElementById('productName').value.trim();
+        const category = document.getElementById('productCategory').value.trim();
+        const unit = document.getElementById('productUnit').value.trim();
+        const unitPrice = Number(document.getElementById('productPrice').value);
+        const stockQty = Number(document.getElementById('productStock').value);
+
+        if (!code || !name || !category || !unit || unitPrice < 0 || stockQty < 0) {
+          alert('Mohon lengkapi data produk dengan benar.');
+          return;
+        }
+
+        if (state.products.some((product) => product.code.toLowerCase() === code.toLowerCase() && product.id !== editId)) {
+          alert('Kode produk sudah digunakan. Gunakan kode yang berbeda.');
+          return;
+        }
+
+        const productData = { code, name, category, unit, unitPrice, stockQty };
+        if (editId) {
+          const index = state.products.findIndex((product) => product.id === editId);
+          if (index >= 0) state.products[index] = { ...state.products[index], ...productData };
+        } else {
+          state.products.push({ id: getNextProductId(), ...productData });
+        }
+
+        productForm.reset();
+        document.getElementById('productEditId').value = '';
+        renderProducts();
+        closeModal('productModal');
+        alert(`Produk ${name} berhasil ${editId ? 'diperbarui' : 'ditambahkan'}.`);
+      });
+    }
+
     const invoiceForm = document.getElementById('invoiceForm');
     if (invoiceForm) {
       invoiceForm.addEventListener('submit', (event) => {
@@ -1321,11 +1719,12 @@ const demoData = {
 
         const rows = Array.from(document.querySelectorAll('#invoiceItemsTableBody tr'));
         const items = rows.map((row) => {
-          const name = row.querySelector('.item-name')?.value?.trim() || '';
+          const productId = row.querySelector('.item-name')?.value || '';
+          const product = getProductById(productId);
           const qty = Number(row.querySelector('.item-qty')?.value || 0);
-          const unitPrice = Number(row.querySelector('.item-price')?.value || 0);
-          return { name, qty, unitPrice };
-        }).filter((item) => item.name && item.qty > 0 && item.unitPrice >= 0);
+          const unitPrice = Number(product?.unitPrice || 0);
+          return { productId, name: product?.name || '', unit: product?.unit || '', qty, unitPrice };
+        }).filter((item) => item.productId && item.name && item.qty > 0 && item.unitPrice >= 0);
 
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.unitPrice, 0);
         const total = subtotal + shippingCost;
@@ -1335,6 +1734,27 @@ const demoData = {
           return;
         }
 
+        const requiredStock = items.reduce((totals, item) => {
+          totals[item.productId] = (totals[item.productId] || 0) + item.qty;
+          return totals;
+        }, {});
+        const insufficientProduct = Object.entries(requiredStock).find(([productId, qty]) => {
+          const product = getProductById(productId);
+          return !product || qty > Number(product.stockQty || 0);
+        });
+
+        if (insufficientProduct) {
+          const product = getProductById(insufficientProduct[0]);
+          const available = Number(product?.stockQty || 0);
+          alert(`Stok ${product?.name || 'produk'} tidak mencukupi. Tersedia ${available} ${product?.unit || ''}, diminta ${insufficientProduct[1]}.`);
+          return;
+        }
+
+        Object.entries(requiredStock).forEach(([productId, qty]) => {
+          const product = getProductById(productId);
+          product.stockQty = Number(product.stockQty || 0) - qty;
+        });
+
         state.invoices.push({
           id: invoiceId,
           customerId,
@@ -1343,6 +1763,7 @@ const demoData = {
           total,
           shippingCost,
           notes,
+          stockApplied: true,
           items: items.length ? items : [{ name: notes || 'Barang Kredit', qty: 1, unitPrice: total }]
         });
 
@@ -1350,6 +1771,7 @@ const demoData = {
         document.getElementById('shippingCost').value = 0;
         ensureInvoiceItems();
         renderInvoices();
+        renderProducts();
         renderDashboard();
         renderAging();
         renderPaymentDebtList();
@@ -1369,8 +1791,10 @@ const demoData = {
         const paymentDate = document.getElementById('paymentModalDate');
         const paymentAmount = document.getElementById('paymentModalAmount');
         const paymentMethod = document.getElementById('paymentModalMethod');
+        const receivedByInput = document.getElementById('paymentModalReceivedBy');
+        const notesInput = document.getElementById('paymentModalNotes');
 
-        if (!invoiceSelect || !paymentDate || !paymentAmount) {
+        if (!invoiceSelect || !paymentDate || !paymentAmount || !receivedByInput) {
           alert('Form pembayaran belum siap.');
           return;
         }
@@ -1380,24 +1804,30 @@ const demoData = {
         const amount = Number(paymentAmount.value || 0);
         const paymentDateValue = paymentDate.value;
         const method = paymentMethod ? paymentMethod.value : 'Tunai';
+        const receivedBy = receivedByInput.value.trim();
+        const notes = notesInput ? notesInput.value.trim() : '';
 
-        if (!invoice || !paymentDateValue || amount <= 0) {
-          alert('Mohon isi data pembayaran dengan benar.');
+        if (!invoice || !paymentDateValue || amount <= 0 || !receivedBy) {
+          alert('Mohon lengkapi tanggal, jumlah pembayaran, dan nama penerima.');
           return;
         }
 
         const discount = getDiscountOnPayment(invoiceId, paymentDateValue);
-        const currentlyPaid = getTotalPaid(invoiceId);
-        const remainingBefore = invoice.total - currentlyPaid;
+        const remainingBefore = getInvoiceRemaining(invoiceId);
         const finalPayment = Math.min(amount, remainingBefore);
+        const appliedDiscount = amount >= remainingBefore - discount
+          ? Math.min(discount, Math.max(remainingBefore - finalPayment, 0))
+          : 0;
 
         state.payments.push({
           id: `PAY-${state.payments.length + 1}`,
           invoiceId,
           paymentDate: paymentDateValue,
           amount: finalPayment,
-          discount,
-          method
+          discount: appliedDiscount,
+          method,
+          receivedBy,
+          notes
         });
 
         renderDashboard();
@@ -1450,16 +1880,18 @@ const demoData = {
       }
 
       const discount = getDiscountOnPayment(invoiceId, paymentDateValue);
-      const currentlyPaid = getTotalPaid(invoiceId);
-      const remainingBefore = invoice.total - currentlyPaid;
+      const remainingBefore = getInvoiceRemaining(invoiceId);
       const finalPayment = Math.min(amount, remainingBefore);
+      const appliedDiscount = amount >= remainingBefore - discount
+        ? Math.min(discount, Math.max(remainingBefore - finalPayment, 0))
+        : 0;
 
       state.payments.push({
         id: `PAY-${state.payments.length + 1}`,
         invoiceId,
         paymentDate: paymentDateValue,
         amount: finalPayment,
-        discount,
+        discount: appliedDiscount,
         method: paymentMethod
       });
 
@@ -1501,6 +1933,18 @@ const demoData = {
           }
           renderDashboard();
           renderCustomers();
+          if (result.products && result.products.length) {
+            state.products = result.products.map((product) => ({
+              id: String(product.id),
+              code: product.product_code,
+              name: product.product_name,
+              category: product.category || '',
+              unit: product.unit || '',
+              unitPrice: Number(product.unit_price || 0),
+              stockQty: Number(product.stock_qty || 0)
+            }));
+          }
+          renderProducts();
           renderInvoices();
           renderPaymentDebtList();
           renderPaymentSummary();
@@ -1525,6 +1969,7 @@ const demoData = {
     bindGlobalActions();
     renderDashboard();
     renderCustomers();
+    renderProducts();
     renderInvoices();
     populateInvoiceSelect();
     renderPaymentDebtList();

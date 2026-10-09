@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistem Piutang Usaha Distributor Bahan Bangunan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -12,7 +15,7 @@
         <div class="brand-box">
           <div class="brand-mark">CK</div>
           <div>
-            <h1>CV Kokoh</h1>
+            <h1>CV KOKOH <span class="brand-dashboard-title">Account Receivable Dashboard</span></h1>
             <small>DISTRIBUTOR BAHAN BANGUNAN</small>
           </div>
         </div>
@@ -20,6 +23,7 @@
         <nav class="nav">
           <button class="nav-item active" data-target="dashboard-panel">Dashboard</button>
           <button class="nav-item" data-target="customer-panel">Pelanggan</button>
+          <button class="nav-item" data-target="product-panel">Produk</button>
           <button class="nav-item" data-target="invoice-panel">Invoice</button>
           <button class="nav-item" data-target="payment-panel">Pembayaran</button>
           <button class="nav-item" data-target="aging-panel">Laporan</button>
@@ -107,6 +111,7 @@
                   <th>Nama</th>
                   <th>Alamat</th>
                   <th>Telepon</th>
+                  <th>NPWP</th>
                   <th>Limit Kredit</th>
                   <th>Status</th>
                   <th>Aksi</th>
@@ -115,6 +120,53 @@
               <tbody id="customerTableBody"></tbody>
             </table>
           </div>
+        </section>
+
+        <section id="product-panel" class="panel page-section hidden">
+          <div class="product-panel-header">
+            <div>
+              <h3>Data Produk</h3>
+              <p>Kelola katalog produk dan informasi harga.</p>
+            </div>
+            <button id="addProductBtn" class="primary-btn" type="button">+ Tambah Produk</button>
+          </div>
+          <div class="product-stats-grid">
+            <div class="product-stat">
+              <span class="product-stat-label">Total Produk</span>
+              <strong id="productCountStat">0</strong>
+              <small>Produk terdaftar</small>
+            </div>
+            <div class="product-stat">
+              <span class="product-stat-label">Kategori</span>
+              <strong id="productCategoryStat">0</strong>
+              <small>Kategori produk</small>
+            </div>
+            <div class="product-stat">
+              <span class="product-stat-label">Harga Tertinggi</span>
+              <strong id="productHighestPriceStat">Rp 0</strong>
+              <small>Per satuan</small>
+            </div>
+            <div class="product-stat">
+              <span class="product-stat-label">Stok Terendah</span>
+              <strong id="productLowestStockStat">-</strong>
+              <small id="productLowestStockNameStat">Periksa ketersediaan</small>
+            </div>
+          </div>
+          <div class="product-toolbar">
+            <label class="product-search-field">
+              <span aria-hidden="true">⌕</span>
+              <input id="productSearchInput" type="search" placeholder="Cari kode atau nama produk..." />
+            </label>
+            <label class="product-filter-field">
+              <span>Kategori</span>
+              <select id="productCategoryFilter">
+                <option value="all">Semua kategori</option>
+              </select>
+            </label>
+            <button id="productSortBtn" class="secondary-btn" type="button" aria-pressed="false">Urutkan harga</button>
+          </div>
+          <p class="product-list-label">DAFTAR PRODUK</p>
+          <div id="productGrid" class="product-list"></div>
         </section>
 
         <section id="invoice-panel" class="panel page-section hidden">
@@ -242,7 +294,15 @@
             </label>
             <label class="field">
               <span>Jumlah Bayar</span>
-              <input type="number" id="paymentModalAmount" min="0" step="1000" required />
+              <input type="number" id="paymentModalAmount" min="0" step="1" required />
+            </label>
+            <label class="field">
+              <span>Diterima Oleh</span>
+              <input type="text" id="paymentModalReceivedBy" placeholder="Nama penerima pembayaran" required />
+            </label>
+            <label class="field full">
+              <span>Keterangan Pembayaran</span>
+              <textarea id="paymentModalNotes" rows="3" placeholder="Contoh: pelunasan invoice atau pembayaran sebagian"></textarea>
             </label>
             <label class="field">
               <span>Sisa Piutang</span>
@@ -338,6 +398,52 @@
       </div>
     </div>
 
+    <div id="productModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <span class="section-tag">Produk</span>
+            <h3 id="productModalTitle">Tambah Produk Baru</h3>
+          </div>
+          <button type="button" class="icon-btn close-modal" data-close="productModal">×</button>
+        </div>
+
+        <form id="productForm" class="modal-form">
+          <input type="hidden" id="productEditId" />
+          <div class="form-grid">
+            <label class="field">
+              <span>Kode Produk</span>
+              <input id="productCode" type="text" placeholder="P-005" required />
+            </label>
+            <label class="field">
+              <span>Nama Produk</span>
+              <input id="productName" type="text" placeholder="Nama barang" required />
+            </label>
+            <label class="field">
+              <span>Kategori</span>
+              <input id="productCategory" type="text" placeholder="Contoh: Semen" required />
+            </label>
+            <label class="field">
+              <span>Satuan</span>
+              <input id="productUnit" type="text" placeholder="Contoh: Sak" required />
+            </label>
+            <label class="field">
+              <span>Harga Satuan</span>
+              <input id="productPrice" type="number" min="0" step="1000" required />
+            </label>
+            <label class="field">
+              <span>Stok</span>
+              <input id="productStock" type="number" min="0" step="1" required />
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn close-modal" data-close="productModal">Batal</button>
+            <button type="submit" class="primary-btn">Simpan Produk</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div id="invoiceModal" class="modal hidden" aria-hidden="true">
       <div class="modal-card">
         <div class="modal-header">
@@ -392,8 +498,8 @@
               <table class="items-table">
                 <thead>
                   <tr>
-                    <th>Nama Item</th>
-                    <th>Qty</th>
+                    <th>Produk</th>
+                    <th>Jumlah dipesan</th>
                     <th>Harga Satuan</th>
                     <th>Subtotal</th>
                     <th>Aksi</th>
