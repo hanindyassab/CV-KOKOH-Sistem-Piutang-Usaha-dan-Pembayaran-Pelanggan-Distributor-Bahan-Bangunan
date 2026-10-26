@@ -80,6 +80,19 @@ const demoData = {
     }).format(Number(value || 0));
   }
 
+  function updateDashboardDate() {
+    const dateElement = document.getElementById('dashboardDate');
+    if (!dateElement) return;
+
+    const formattedDate = new Date().toLocaleDateString('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    dateElement.textContent = formattedDate.replace(/^./, (character) => character.toLocaleUpperCase('id-ID'));
+  }
+
   function escapeHTML(value) {
     return String(value ?? '').replace(/[&<>"']/g, (character) => ({
       '&': '&amp;',
@@ -116,90 +129,213 @@ const demoData = {
       .filter((entry) => entry.hasDebt);
   }
 
-  function downloadReceivablesLedger() {
-    const records = state.invoices
-      .map((invoice) => {
-        const customer = getCustomerById(invoice.customerId);
-        const totalPaid = getTotalPaid(invoice.id);
-        const totalDiscount = getPaymentsByInvoice(invoice.id).reduce((sum, payment) => sum + getPaymentDiscount(payment), 0);
-        const outstanding = Math.max(invoice.total - getTotalSettled(invoice.id), 0);
-        const status = getInvoiceStatus(invoice);
-        return {
-          invoice,
-          customer,
-          totalPaid,
-          totalDiscount,
-          outstanding,
-          status
-        };
-      })
-      .filter((entry) => entry.outstanding > 0 || entry.totalDiscount > 0)
-      .sort((a, b) => new Date(a.invoice.dueDate) - new Date(b.invoice.dueDate));
+  function getReceivablesPeriod(periodType, year, month) {
+    const selectedYear = Number(year);
+    if (periodType === 'year') {
+      return {
+        start: `${selectedYear}-01-01`,
+        end: `${selectedYear}-12-31`,
+        label: `Tahun ${selectedYear}`
+      };
+    }
 
-    const totalOutstanding = records.reduce((sum, entry) => sum + entry.outstanding, 0);
-    const today = new Date().toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    const selectedMonth = Number(month);
+    const monthText = String(selectedMonth).padStart(2, '0');
+    const lastDay = new Date(selectedYear, selectedMonth, 0).getDate();
+    return {
+      start: `${selectedYear}-${monthText}-01`,
+      end: `${selectedYear}-${monthText}-${String(lastDay).padStart(2, '0')}`,
+      label: new Date(selectedYear, selectedMonth - 1, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+    };
+  }
+
+  function getInvoiceStatusAtDate(invoice, payments, reportEnd) {
+    const settled = payments
+      .filter((payment) => payment.invoiceId === invoice.id && payment.paymentDate <= reportEnd)
+      .reduce((sum, payment) => sum + Number(payment.amount || 0) + getPaymentDiscount(payment), 0);
+    const remaining = Number(invoice.total || 0) - settled;
+
+    if (remaining <= 0) return { text: 'Lunas', className: 'status-lunas' };
+    if (settled > 0) return { text: 'Sebagian Dibayar', className: 'status-sebagian' };
+    if (reportEnd > invoice.dueDate) return { text: 'Overdue', className: 'status-overdue' };
+    return { text: 'Belum Dibayar', className: 'status-belum' };
+  }
+
+  function downloadReceivablesLedger({ periodType, year, month, customerId }) {
+    const period = getReceivablesPeriod(periodType, year, month);
+    const selectedCustomers = customerId === 'all'
+      ? state.customers
+      : state.customers.filter((customer) => customer.id === customerId);
+    let detailIndex = 0;
+
+    const customerLedgers = selectedCustomers.map((customer) => {
+      const customerInvoices = state.invoices.filter((invoice) => invoice.customerId === customer.id);
+      const invoiceIds = new Set(customerInvoices.map((invoice) => invoice.id));
+      const customerPayments = state.payments.filter((payment) => invoiceIds.has(payment.invoiceId));
+      const openingDebits = customerInvoices
+        .filter((invoice) => invoice.invoiceDate < period.start)
+        .reduce((sum, invoice) => sum + Number(invoice.total || 0), 0);
+      const openingCredits = customerPayments
+        .filter((payment) => payment.paymentDate < period.start)
+        .reduce((sum, payment) => sum + Number(payment.amount || 0) + getPaymentDiscount(payment), 0);
+      const openingBalance = openingDebits - openingCredits;
+
+      const transactions = [
+        ...customerInvoices
+          .filter((invoice) => invoice.invoiceDate >= period.start && invoice.invoiceDate <= period.end)
+          .map((invoice) => ({ type: 'invoice', date: invoice.invoiceDate, invoice, debit: Number(invoice.total || 0), credit: 0 })),
+        ...customerPayments
+          .filter((payment) => payment.paymentDate >= period.start && payment.paymentDate <= period.end)
+          .map((payment) => ({
+            type: 'payment',
+            date: payment.paymentDate,
+            invoice: customerInvoices.find((invoice) => invoice.id === payment.invoiceId),
+            payment,
+            debit: 0,
+            credit: Number(payment.amount || 0) + getPaymentDiscount(payment)
+          }))
+      ].sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'invoice' ? -1 : 1));
+
+      let runningBalance = openingBalance;
+      const rows = [`
+        <tr class="opening-row">
+          <td>${period.start}</td>
+          <td>Saldo awal periode</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>${formatCurrency(runningBalance)}</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      `];
+      const detailBlocks = [];
+
+      transactions.forEach((transaction) => {
+        runningBalance += transaction.debit - transaction.credit;
+        const invoice = transaction.invoice;
+        const status = getInvoiceStatusAtDate(invoice, customerPayments, period.end);
+        const reference = transaction.type === 'invoice'
+          ? invoice.id
+          : (transaction.payment.payment_code || transaction.payment.id);
+        const detailId = `transaction-detail-${++detailIndex}`;
+        const remark = transaction.type === 'invoice'
+          ? `Penjualan kredit, ${invoice.id}`
+          : `Penerimaan pembayaran, ${invoice.id}`;
+
+        rows.push(`
+          <tr>
+            <td>${escapeHTML(transaction.date)}</td>
+            <td>${escapeHTML(remark)}</td>
+            <td>${escapeHTML(reference)}</td>
+            <td>${transaction.debit ? formatCurrency(transaction.debit) : '-'}</td>
+            <td>${transaction.credit ? formatCurrency(transaction.credit) : '-'}</td>
+            <td>${formatCurrency(runningBalance)}</td>
+            <td>${escapeHTML(status.text)}</td>
+            <td><a href="#${detailId}">Detail</a></td>
+          </tr>
+        `);
+
+        if (transaction.type === 'invoice') {
+          const invoiceItems = invoice.items || [];
+          detailBlocks.push(`
+            <article class="transaction-detail" id="${detailId}">
+              <div class="transaction-detail-header"><h3>Detail Penjualan Kredit</h3><strong>No. Invoice: ${escapeHTML(invoice.id)}</strong></div>
+              <p>Pelanggan: ${escapeHTML(customer.name)}</p>
+              <p>Tanggal: ${escapeHTML(invoice.invoiceDate)} · Jatuh tempo: ${escapeHTML(invoice.dueDate)}</p>
+              <table><thead><tr><th>Barang</th><th>Qty</th><th>Harga satuan</th><th>Subtotal</th></tr></thead><tbody>
+                ${invoiceItems.map((item) => `<tr><td>${escapeHTML(item.name || '-')}</td><td>${Number(item.qty || 0)}</td><td>${formatCurrency(item.unitPrice)}</td><td>${formatCurrency(Number(item.qty || 0) * Number(item.unitPrice || 0))}</td></tr>`).join('')}
+              </tbody></table>
+              <p>Total invoice: <strong>${formatCurrency(invoice.total)}</strong></p>
+            </article>
+          `);
+        } else {
+          const payment = transaction.payment;
+          const discount = getPaymentDiscount(payment);
+          detailBlocks.push(`
+            <article class="transaction-detail" id="${detailId}">
+              <div class="transaction-detail-header"><h3>Detail Pembayaran</h3><strong>No. Invoice: ${escapeHTML(invoice.id)}</strong></div>
+              <p>No. Bukti: ${escapeHTML(reference)}</p>
+              <p>Pelanggan: ${escapeHTML(customer.name)} · Tanggal: ${escapeHTML(payment.paymentDate)}</p>
+              <p>Metode: ${escapeHTML(payment.method || payment.payment_method || 'Tunai')} · Diterima oleh: ${escapeHTML(payment.receivedBy || payment.received_by || '-')}</p>
+              <p>Uang diterima: <strong>${formatCurrency(payment.amount)}</strong> · Diskon: <strong>${formatCurrency(discount)}</strong></p>
+              <p>Keterangan: ${escapeHTML(payment.notes || 'Tidak ada keterangan')}</p>
+            </article>
+          `);
+        }
+      });
+
+      return {
+        customer,
+        invoices: customerInvoices,
+        openingBalance,
+        closingBalance: runningBalance,
+        hasPeriodActivity: transactions.length > 0,
+        rows: rows.join(''),
+        detailBlocks: detailBlocks.join('')
+      };
+    }).filter((ledger) => customerId !== 'all' || ledger.hasPeriodActivity || ledger.openingBalance !== 0);
+
+    const totalOpening = customerLedgers.reduce((sum, ledger) => sum + ledger.openingBalance, 0);
+    const totalClosing = customerLedgers.reduce((sum, ledger) => sum + ledger.closingBalance, 0);
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    const reportSections = customerLedgers.map((ledger) => {
+      const periodInvoiceIds = ledger.invoices
+        .filter((invoice) => invoice.invoiceDate >= period.start && invoice.invoiceDate <= period.end)
+        .map((invoice) => invoice.id);
+      const invoiceRefs = periodInvoiceIds.length ? periodInvoiceIds.join(', ') : 'Tidak ada invoice baru';
+      return `
+        <section class="customer-ledger">
+          <div class="customer-ledger-heading">
+            <div><span>Customer</span><strong>${escapeHTML(ledger.customer.name)}</strong><span>Alamat: ${escapeHTML(ledger.customer.address || '-')}</span></div>
+            <div class="invoice-reference"><span>No. Invoice</span><strong>${escapeHTML(invoiceRefs)}</strong></div>
+          </div>
+          <table class="ledger-table">
+            <thead><tr><th>Tanggal</th><th>Remark</th><th>Ref</th><th>Debit</th><th>Kredit</th><th>Saldo</th><th>Status Invoice</th><th>Detail</th></tr></thead>
+            <tbody>${ledger.rows}</tbody>
+            <tfoot><tr><td colspan="5">Saldo akhir periode</td><td colspan="3">${formatCurrency(ledger.closingBalance)}</td></tr></tfoot>
+          </table>
+          <div class="transaction-detail-list">${ledger.detailBlocks}</div>
+        </section>
+      `;
+    }).join('');
 
     const html = `
-      <html>
+      <!doctype html>
+      <html lang="id">
         <head>
-          <title>Laporan Buku Besar Pembantu Piutang</title>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Buku Besar Pembantu Piutang - ${escapeHTML(period.label)}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 32px; color: #10213b; }
-            h1 { margin-bottom: 6px; }
-            .meta { color: #53657e; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-            th, td { border: 1px solid #dfe7f5; padding: 10px 12px; text-align: left; vertical-align: top; }
-            th { background: #edf2ff; }
-            .totals { font-weight: 700; background: #f7faff; }
-            .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; }
-            .status { background: #e7f7ee; color: #0f6b42; }
+            body { font-family: Arial, sans-serif; margin: 32px; color: #17372a; }
+            h1 { margin: 0 0 6px; }
+            .report-meta { color: #62756b; margin-bottom: 12px; }
+            .report-totals { display: flex; gap: 28px; margin: 20px 0; padding: 14px; background: #f2f6f2; }
+            .customer-ledger { margin: 26px 0 34px; page-break-inside: avoid; }
+            .customer-ledger-heading { display: flex; justify-content: space-between; gap: 24px; align-items: start; margin-bottom: 10px; }
+            .customer-ledger-heading > div { display: flex; flex-direction: column; gap: 4px; }
+            .customer-ledger-heading span { color: #62756b; font-size: 13px; }
+            .customer-ledger-heading strong { font-size: 16px; }
+            .invoice-reference { text-align: right; max-width: 55%; }
+            table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+            th, td { border: 1px solid #dce9e2; padding: 8px 9px; text-align: left; vertical-align: top; }
+            th { background: #e8f1e9; }
+            tfoot { font-weight: 700; background: #f2f6f2; }
+            .opening-row { background: #fafcf9; }
+            a { color: #4c8060; font-weight: 700; }
+            .transaction-detail { margin: 18px 0; padding: 14px; border: 1px solid #dce9e2; page-break-inside: avoid; }
+            .transaction-detail-header { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+            .transaction-detail-header h3 { margin: 0 0 8px; }
+            @media print { body { margin: 14mm; } a { color: inherit; text-decoration: none; } }
           </style>
         </head>
         <body>
           <h1>Buku Besar Pembantu Piutang</h1>
-          <div class="meta">Tanggal: ${today}</div>
-          <div class="meta">Total sisa piutang: <strong>${formatCurrency(totalOutstanding)}</strong></div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Perusahaan</th>
-                <th>No. Invoice</th>
-                <th>Tgl Invoice</th>
-                <th>Jatuh Tempo</th>
-                <th>Total Invoice</th>
-                <th>Sudah Bayar</th>
-                <th>Diskon</th>
-                <th>Sisa Piutang</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${records.map(({ invoice, customer, totalPaid, totalDiscount, outstanding, status }) => `
-                <tr>
-                  <td>${customer ? customer.name : '-'}</td>
-                  <td>${invoice.id}</td>
-                  <td>${invoice.invoiceDate}</td>
-                  <td>${invoice.dueDate}</td>
-                  <td>${formatCurrency(invoice.total)}</td>
-                  <td>${formatCurrency(totalPaid)}</td>
-                  <td>${formatCurrency(totalDiscount)}</td>
-                  <td>${formatCurrency(outstanding)}</td>
-                  <td><span class="pill ${status.className === 'status-overdue' ? 'status overdue' : 'status'}">${status.text}</span></td>
-                </tr>
-              `).join('')}
-            </tbody>
-            <tfoot>
-              <tr class="totals">
-                <td colspan="7">Total</td>
-                <td colspan="2">${formatCurrency(totalOutstanding)}</td>
-              </tr>
-            </tfoot>
-          </table>
+          <div class="report-meta">Periode: ${escapeHTML(period.label)}</div>
+          <div class="report-meta">Tanggal dibuat: ${escapeHTML(today)}</div>
+          <div class="report-totals"><div>Saldo awal periode: <strong>${formatCurrency(totalOpening)}</strong></div><div>Saldo akhir periode: <strong>${formatCurrency(totalClosing)}</strong></div></div>
+          ${reportSections || '<p>Tidak ada transaksi untuk periode dan pelanggan yang dipilih.</p>'}
         </body>
       </html>
     `;
@@ -208,11 +344,40 @@ const demoData = {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'laporan-buku-besar-piutang.html';
+    link.download = `buku-besar-piutang-${periodType}-${year}${periodType === 'month' ? `-${String(month).padStart(2, '0')}` : ''}.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  function openReceivablesReportModal() {
+    const yearSelect = document.getElementById('reportYear');
+    const monthSelect = document.getElementById('reportMonth');
+    const customerSelect = document.getElementById('reportCustomer');
+    const periodTypeSelect = document.getElementById('reportPeriodType');
+    const monthField = document.getElementById('reportMonthField');
+    if (!yearSelect || !monthSelect || !customerSelect || !periodTypeSelect || !monthField) return;
+
+    const currentYear = new Date().getFullYear();
+    const years = new Set([currentYear]);
+    state.invoices.forEach((invoice) => {
+      const year = Number(String(invoice.invoiceDate || '').slice(0, 4));
+      if (year) years.add(year);
+    });
+    state.payments.forEach((payment) => {
+      const year = Number(String(payment.paymentDate || '').slice(0, 4));
+      if (year) years.add(year);
+    });
+    yearSelect.innerHTML = [...years].sort((a, b) => b - a).map((year) => `<option value="${year}">${year}</option>`).join('');
+    yearSelect.value = String(currentYear);
+    monthSelect.value = String(new Date().getMonth() + 1);
+    customerSelect.innerHTML = '<option value="all">Semua pelanggan</option>' + state.customers.map((customer) => `
+      <option value="${escapeHTML(customer.id)}">${escapeHTML(customer.name)}</option>
+    `).join('');
+    periodTypeSelect.value = 'month';
+    monthField.hidden = false;
+    openModal('receivablesReportModal');
   }
 
   function renderDashboard() {
@@ -868,7 +1033,7 @@ const demoData = {
             <td>${customer ? customer.name : '-'}</td>
             <td>${formatCurrency(remaining)}</td>
             <td><span class="status-pill ${status.className}">${status.text}</span></td>
-            <td><button class="action-btn primary" data-detail="invoice" data-id="${invoice.id}">Hapus</button></td>
+            <td><button class="action-btn primary" data-detail="invoice" data-id="${invoice.id}">Detail</button></td>
           </tr>
         `;
       }).join('');
@@ -1555,9 +1720,26 @@ const demoData = {
     const downloadReceivablesLedgerBtn = document.getElementById('downloadReceivablesLedgerBtn');
     if (downloadReceivablesLedgerBtn) {
       downloadReceivablesLedgerBtn.addEventListener('click', () => {
-        downloadReceivablesLedger();
+        openReceivablesReportModal();
       });
     }
+
+    const reportPeriodType = document.getElementById('reportPeriodType');
+    const reportMonthField = document.getElementById('reportMonthField');
+    reportPeriodType?.addEventListener('change', () => {
+      if (reportMonthField) reportMonthField.hidden = reportPeriodType.value === 'year';
+    });
+
+    const receivablesReportForm = document.getElementById('receivablesReportForm');
+    receivablesReportForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const periodType = document.getElementById('reportPeriodType').value;
+      const year = document.getElementById('reportYear').value;
+      const month = document.getElementById('reportMonth').value;
+      const customerId = document.getElementById('reportCustomer').value;
+      closeModal('receivablesReportModal');
+      downloadReceivablesLedger({ periodType, year, month, customerId });
+    });
 
     const addInvoiceItemBtn = document.getElementById('addInvoiceItemBtn');
     if (addInvoiceItemBtn) {
@@ -1958,6 +2140,9 @@ const demoData = {
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    updateDashboardDate();
+    window.setInterval(updateDashboardDate, 60000);
+
     const paymentDateInput = document.getElementById('paymentDate');
     if (paymentDateInput) {
       paymentDateInput.value = new Date().toISOString().slice(0, 10);
