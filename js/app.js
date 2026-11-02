@@ -16,10 +16,10 @@ const demoData = {
     { id: 'C-004', name: 'UD. Karya Abadi', address: 'Jl. Riau 9', phone: '0857-3916-8420', npwp: '05.836.294.7-152.000', creditLimit: 80000000, status: 'Aktif' }
   ],
   invoices: [
-    { id: 'INV-1001', customerId: 'C-001', invoiceDate: '2026-08-01', dueDate: '2026-08-30', total: 24000000, items: [{ productId: 'P-001', name: 'Semen Portland', qty: 400, unitPrice: 45000 }, { productId: 'P-005', name: 'Besi WF 8', qty: 100, unitPrice: 180000 }] },
-    { id: 'INV-1002', customerId: 'C-002', invoiceDate: '2026-08-15', dueDate: '2026-09-14', total: 18000000, items: [{ productId: 'P-003', name: 'Cat Tembok', qty: 150, unitPrice: 70000 }, { productId: 'P-006', name: 'Bata Merah', qty: 5000, unitPrice: 2600 }] },
-    { id: 'INV-1003', customerId: 'C-003', invoiceDate: '2026-07-10', dueDate: '2026-08-09', total: 32000000, items: [{ productId: 'P-004', name: 'Pipa PVC', qty: 200, unitPrice: 90000 }, { productId: 'P-007', name: 'Keramik', qty: 600, unitPrice: 42000 }] },
-    { id: 'INV-1004', customerId: 'C-004', invoiceDate: '2026-09-02', dueDate: '2026-10-02', total: 12500000, items: [{ productId: 'P-008', name: 'Bata Ringan', qty: 3000, unitPrice: 3200 }] }
+    { id: 'INV-1001', customerId: 'C-001', invoiceDate: '2026-08-01', dueDate: '2026-08-30', total: 36000000, shippingCost: 0, items: [{ productId: 'P-001', name: 'Semen Portland', qty: 400, unitPrice: 45000 }, { productId: 'P-005', name: 'Besi WF 8', qty: 100, unitPrice: 180000 }] },
+    { id: 'INV-1002', customerId: 'C-002', invoiceDate: '2026-08-15', dueDate: '2026-09-14', total: 23500000, shippingCost: 0, items: [{ productId: 'P-003', name: 'Cat Tembok', qty: 150, unitPrice: 70000 }, { productId: 'P-006', name: 'Bata Merah', qty: 5000, unitPrice: 2600 }] },
+    { id: 'INV-1003', customerId: 'C-003', invoiceDate: '2026-07-10', dueDate: '2026-08-09', total: 43200000, shippingCost: 0, items: [{ productId: 'P-004', name: 'Pipa PVC', qty: 200, unitPrice: 90000 }, { productId: 'P-007', name: 'Keramik', qty: 600, unitPrice: 42000 }] },
+    { id: 'INV-1004', customerId: 'C-004', invoiceDate: '2026-09-02', dueDate: '2026-10-02', total: 9600000, shippingCost: 0, items: [{ productId: 'P-008', name: 'Bata Ringan', qty: 3000, unitPrice: 3200 }] }
   ],
   payments: [
     { id: 'PAY-1', invoiceId: 'INV-1001', paymentDate: '2026-08-08', amount: 12000000 },
@@ -183,7 +183,7 @@ const demoData = {
       const transactions = [
         ...customerInvoices
           .filter((invoice) => invoice.invoiceDate >= period.start && invoice.invoiceDate <= period.end)
-          .map((invoice) => ({ type: 'invoice', date: invoice.invoiceDate, invoice, debit: Number(invoice.total || 0), credit: 0 })),
+          .map((invoice) => ({ type: 'invoice', date: invoice.invoiceDate, invoice, debit: Number(invoice.total || 0), credit: 0, discount: 0 })),
         ...customerPayments
           .filter((payment) => payment.paymentDate >= period.start && payment.paymentDate <= period.end)
           .map((payment) => ({
@@ -192,7 +192,8 @@ const demoData = {
             invoice: customerInvoices.find((invoice) => invoice.id === payment.invoiceId),
             payment,
             debit: 0,
-            credit: Number(payment.amount || 0) + getPaymentDiscount(payment)
+            credit: Number(payment.amount || 0),
+            discount: getPaymentDiscount(payment)
           }))
       ].sort((a, b) => a.date.localeCompare(b.date) || (a.type === 'invoice' ? -1 : 1));
 
@@ -204,6 +205,7 @@ const demoData = {
           <td>-</td>
           <td>-</td>
           <td>-</td>
+          <td>-</td>
           <td>${formatCurrency(runningBalance)}</td>
           <td>-</td>
           <td>-</td>
@@ -212,7 +214,7 @@ const demoData = {
       const detailBlocks = [];
 
       transactions.forEach((transaction) => {
-        runningBalance += transaction.debit - transaction.credit;
+        runningBalance += transaction.debit - transaction.credit - transaction.discount;
         const invoice = transaction.invoice;
         const status = getInvoiceStatusAtDate(invoice, customerPayments, period.end);
         const reference = transaction.type === 'invoice'
@@ -230,16 +232,18 @@ const demoData = {
             <td>${escapeHTML(reference)}</td>
             <td>${transaction.debit ? formatCurrency(transaction.debit) : '-'}</td>
             <td>${transaction.credit ? formatCurrency(transaction.credit) : '-'}</td>
+            <td>${transaction.discount ? formatCurrency(transaction.discount) : '-'}</td>
             <td>${formatCurrency(runningBalance)}</td>
             <td>${escapeHTML(status.text)}</td>
-            <td><a href="#${detailId}">Detail</a></td>
+            <td><button class="detail-button" type="button" data-detail-id="${detailId}">Detail</button></td>
           </tr>
         `);
 
         if (transaction.type === 'invoice') {
           const invoiceItems = invoice.items || [];
           detailBlocks.push(`
-            <article class="transaction-detail" id="${detailId}">
+            <template id="${detailId}">
+            <article class="transaction-detail">
               <div class="transaction-detail-header"><h3>Detail Penjualan Kredit</h3><strong>No. Invoice: ${escapeHTML(invoice.id)}</strong></div>
               <p>Pelanggan: ${escapeHTML(customer.name)}</p>
               <p>Tanggal: ${escapeHTML(invoice.invoiceDate)} · Jatuh tempo: ${escapeHTML(invoice.dueDate)}</p>
@@ -248,12 +252,14 @@ const demoData = {
               </tbody></table>
               <p>Total invoice: <strong>${formatCurrency(invoice.total)}</strong></p>
             </article>
+            </template>
           `);
         } else {
           const payment = transaction.payment;
           const discount = getPaymentDiscount(payment);
           detailBlocks.push(`
-            <article class="transaction-detail" id="${detailId}">
+            <template id="${detailId}">
+            <article class="transaction-detail">
               <div class="transaction-detail-header"><h3>Detail Pembayaran</h3><strong>No. Invoice: ${escapeHTML(invoice.id)}</strong></div>
               <p>No. Bukti: ${escapeHTML(reference)}</p>
               <p>Pelanggan: ${escapeHTML(customer.name)} · Tanggal: ${escapeHTML(payment.paymentDate)}</p>
@@ -261,6 +267,7 @@ const demoData = {
               <p>Uang diterima: <strong>${formatCurrency(payment.amount)}</strong> · Diskon: <strong>${formatCurrency(discount)}</strong></p>
               <p>Keterangan: ${escapeHTML(payment.notes || 'Tidak ada keterangan')}</p>
             </article>
+            </template>
           `);
         }
       });
@@ -291,12 +298,12 @@ const demoData = {
             <div class="invoice-reference"><span>No. Invoice</span><strong>${escapeHTML(invoiceRefs)}</strong></div>
           </div>
           <table class="ledger-table">
-            <thead><tr><th>Tanggal</th><th>Remark</th><th>Ref</th><th>Debit</th><th>Kredit</th><th>Saldo</th><th>Status Invoice</th><th>Detail</th></tr></thead>
+            <thead><tr><th>Tanggal</th><th>Remark</th><th>Ref</th><th>Debit</th><th>Kredit</th><th>Diskon</th><th>Saldo</th><th>Status Invoice</th><th>Detail</th></tr></thead>
             <tbody>${ledger.rows}</tbody>
-            <tfoot><tr><td colspan="5">Saldo akhir periode</td><td colspan="3">${formatCurrency(ledger.closingBalance)}</td></tr></tfoot>
+            <tfoot><tr><td colspan="6">Saldo akhir periode</td><td colspan="3">${formatCurrency(ledger.closingBalance)}</td></tr></tfoot>
           </table>
-          <div class="transaction-detail-list">${ledger.detailBlocks}</div>
         </section>
+        ${ledger.detailBlocks}
       `;
     }).join('');
 
@@ -323,11 +330,14 @@ const demoData = {
             th { background: #e8f1e9; }
             tfoot { font-weight: 700; background: #f2f6f2; }
             .opening-row { background: #fafcf9; }
-            a { color: #4c8060; font-weight: 700; }
+              .detail-button { padding: 0; border: 0; background: none; color: #4c8060; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
             .transaction-detail { margin: 18px 0; padding: 14px; border: 1px solid #dce9e2; page-break-inside: avoid; }
             .transaction-detail-header { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
             .transaction-detail-header h3 { margin: 0 0 8px; }
-            @media print { body { margin: 14mm; } a { color: inherit; text-decoration: none; } }
+              .detail-dialog { width: min(760px, calc(100% - 32px)); max-height: 85vh; overflow: auto; border: 1px solid #dce9e2; padding: 20px; color: inherit; }
+              .detail-dialog::backdrop { background: rgb(15 23 42 / 45%); }
+              .detail-dialog-close { float: right; padding: 6px 12px; border: 1px solid #dce9e2; background: #fff; cursor: pointer; }
+              @media print { body { margin: 14mm; } .detail-button, .detail-dialog { display: none; } }
           </style>
         </head>
         <body>
@@ -336,6 +346,26 @@ const demoData = {
           <div class="report-meta">Tanggal dibuat: ${escapeHTML(today)}</div>
           <div class="report-totals"><div>Saldo awal periode: <strong>${formatCurrency(totalOpening)}</strong></div><div>Saldo akhir periode: <strong>${formatCurrency(totalClosing)}</strong></div></div>
           ${reportSections || '<p>Tidak ada transaksi untuk periode dan pelanggan yang dipilih.</p>'}
+            <dialog class="detail-dialog" id="detailDialog">
+              <button type="button" class="detail-dialog-close">Tutup</button>
+              <div class="detail-dialog-content"></div>
+            </dialog>
+            <script>
+              const detailDialog = document.getElementById('detailDialog');
+              const detailContent = detailDialog.querySelector('.detail-dialog-content');
+              document.addEventListener('click', (event) => {
+                const button = event.target.closest('.detail-button');
+                if (!button) return;
+                const detailTemplate = document.getElementById(button.dataset.detailId);
+                if (!detailTemplate) return;
+                detailContent.replaceChildren(detailTemplate.content.cloneNode(true));
+                detailDialog.showModal();
+              });
+              detailDialog.querySelector('.detail-dialog-close').addEventListener('click', () => detailDialog.close());
+              detailDialog.addEventListener('click', (event) => {
+                if (event.target === detailDialog) detailDialog.close();
+              });
+            </script>
         </body>
       </html>
     `;
@@ -359,6 +389,13 @@ const demoData = {
     const monthField = document.getElementById('reportMonthField');
     if (!yearSelect || !monthSelect || !customerSelect || !periodTypeSelect || !monthField) return;
 
+    const toggleMonthField = () => {
+      const isYearly = periodTypeSelect.value === 'year';
+      monthField.hidden = isYearly;
+      monthSelect.disabled = isYearly;
+      monthSelect.required = !isYearly;
+    };
+
     const currentYear = new Date().getFullYear();
     const years = new Set([currentYear]);
     state.invoices.forEach((invoice) => {
@@ -376,8 +413,52 @@ const demoData = {
       <option value="${escapeHTML(customer.id)}">${escapeHTML(customer.name)}</option>
     `).join('');
     periodTypeSelect.value = 'month';
-    monthField.hidden = false;
+    toggleMonthField();
     openModal('receivablesReportModal');
+  }
+
+  function toggleReceivablesMonthField() {
+    const periodTypeSelect = document.getElementById('reportPeriodType');
+    const monthField = document.getElementById('reportMonthField');
+    const monthSelect = document.getElementById('reportMonth');
+    if (!periodTypeSelect || !monthField || !monthSelect) return;
+
+    const isYearly = periodTypeSelect.value === 'year';
+    monthField.hidden = isYearly;
+    monthSelect.disabled = isYearly;
+    monthSelect.required = !isYearly;
+  }
+
+  function getMonthlyCashflowSeries() {
+    const monthLabels = Array.from({ length: 6 }, (_, index) => {
+      const date = new Date();
+      date.setDate(1);
+      date.setMonth(date.getMonth() - (5 - index));
+      return {
+        label: date.toLocaleDateString('id-ID', { month: 'short' }),
+        key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      };
+    });
+
+    let cumulativeOutstanding = 0;
+    return monthLabels.map(({ label, key }) => {
+      const invoiceTotal = state.invoices
+        .filter((invoice) => invoice.invoiceDate.startsWith(key))
+        .reduce((sum, invoice) => sum + Number(invoice.total || 0), 0);
+      const paymentTotal = state.payments
+        .filter((payment) => payment.paymentDate && payment.paymentDate.startsWith(key))
+        .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+
+      cumulativeOutstanding = Math.max(cumulativeOutstanding + (invoiceTotal - paymentTotal), 0);
+
+      return {
+        label,
+        key,
+        invoiceTotal,
+        paymentTotal,
+        outstandingTotal: cumulativeOutstanding
+      };
+    });
   }
 
   function renderDashboard() {
@@ -438,45 +519,24 @@ const demoData = {
 
     const cashflowChart = document.getElementById('cashflowChart');
     if (cashflowChart) {
-      const monthLabels = Array.from({ length: 6 }, (_, index) => {
-        const date = new Date();
-        date.setDate(1);
-        date.setMonth(date.getMonth() - (5 - index));
-        return {
-          label: date.toLocaleDateString('id-ID', { month: 'short' }),
-          key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-        };
-      });
+      const monthSeries = getMonthlyCashflowSeries();
 
       const maxChartValue = Math.max(
-        ...monthLabels.map(({ key }) => {
-          const invoiceTotal = state.invoices
-            .filter((invoice) => invoice.invoiceDate.startsWith(key))
-            .reduce((sum, invoice) => sum + Number(invoice.total || 0), 0);
-          const paymentTotal = state.payments
-            .filter((payment) => payment.paymentDate && payment.paymentDate.startsWith(key))
-            .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
-          return Math.max(invoiceTotal, paymentTotal, 1);
-        }),
+        ...monthSeries.map(({ invoiceTotal, paymentTotal, outstandingTotal }) => Math.max(invoiceTotal, paymentTotal, outstandingTotal, 1)),
         1
       );
 
-      cashflowChart.innerHTML = monthLabels.map(({ label, key }) => {
-        const invoiceTotal = state.invoices
-          .filter((invoice) => invoice.invoiceDate.startsWith(key))
-          .reduce((sum, invoice) => sum + Number(invoice.total || 0), 0);
-        const paymentTotal = state.payments
-          .filter((payment) => payment.paymentDate && payment.paymentDate.startsWith(key))
-          .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
-
+      cashflowChart.innerHTML = monthSeries.map(({ label, invoiceTotal, paymentTotal, outstandingTotal }) => {
         const invoiceHeight = Math.max((invoiceTotal / maxChartValue) * 100, 8);
         const paymentHeight = Math.max((paymentTotal / maxChartValue) * 100, 8);
+        const outstandingHeight = Math.max((outstandingTotal / maxChartValue) * 100, 8);
+        const tooltipText = `Bulan ${label}: piutang terakumulasi ${formatCurrency(outstandingTotal)} • tagihan ${formatCurrency(invoiceTotal)} • pembayaran ${formatCurrency(paymentTotal)}`;
 
         return `
-          <div class="bar-group">
+          <div class="bar-group" data-tooltip="${escapeHTML(tooltipText)}" aria-label="${escapeHTML(tooltipText)}">
             <div class="bar-stack">
               <span class="bar invoice-bar" style="height:${invoiceHeight}%"></span>
-              <span class="bar paid-bar" style="height:${paymentHeight}%"></span>
+              <span class="bar paid-bar" style="height:${Math.max(paymentHeight, outstandingHeight)}%"></span>
             </div>
             <label>${label}</label>
           </div>
@@ -706,23 +766,55 @@ const demoData = {
 
   function getDiscountOnPayment(invoiceId, paymentDate) {
     const invoice = state.invoices.find((item) => item.id === invoiceId);
-    if (!invoice || !paymentDate) return 0;
-
-    const invoiceDate = new Date(`${invoice.invoiceDate}T00:00:00`);
-    const paymentDay = new Date(`${paymentDate}T00:00:00`);
-    const daysFromInvoice = Math.floor((paymentDay - invoiceDate) / (1000 * 60 * 60 * 24));
-
-    if (daysFromInvoice >= 0 && daysFromInvoice <= 10) {
-      return getInvoiceRemaining(invoiceId) * 0.02;
-    }
-
-    return 0;
+    if (!invoice || !paymentDate || !isDiscountEligibleInvoice(invoiceId, paymentDate)) return 0;
+    return getInvoiceRemaining(invoiceId) * 0.02;
   }
 
   function getInvoiceRemaining(invoiceId) {
     const invoice = state.invoices.find((item) => item.id === invoiceId);
     if (!invoice) return 0;
     return Math.max(invoice.total - getTotalSettled(invoiceId), 0);
+  }
+
+  function isDiscountEligibleInvoice(invoiceId, paymentDate) {
+    const invoice = state.invoices.find((item) => item.id === invoiceId);
+    if (!invoice || !paymentDate) return false;
+
+    const customer = getCustomerById(invoice.customerId);
+    if (!customer || customer.status !== 'Aktif') return false;
+
+    const invoiceDate = new Date(`${invoice.invoiceDate}T00:00:00`);
+    const paymentDay = new Date(`${paymentDate}T00:00:00`);
+    const daysFromInvoice = Math.floor((paymentDay - invoiceDate) / (1000 * 60 * 60 * 24));
+    return daysFromInvoice >= 0 && daysFromInvoice <= 10;
+  }
+
+  function validatePaymentAmount(invoiceId, paymentDate, amount) {
+    const invoice = state.invoices.find((item) => item.id === invoiceId);
+    if (!invoice || !paymentDate || !Number(amount)) {
+      return { valid: true, expectedPayable: 0 };
+    }
+
+    const discount = getDiscountOnPayment(invoiceId, paymentDate);
+    if (discount <= 0) {
+      return { valid: true, expectedPayable: getInvoiceRemaining(invoiceId) };
+    }
+
+    const remainingBefore = getInvoiceRemaining(invoiceId);
+    const expectedPayable = Math.max(remainingBefore - discount, 0);
+    const paymentValue = Number(amount);
+    const isUnexpectedAmount = paymentValue > 0
+      && paymentValue !== Number(expectedPayable)
+      && paymentValue > Number(expectedPayable)
+      && paymentValue <= Number(remainingBefore);
+
+    return {
+      valid: !isUnexpectedAmount,
+      expectedPayable,
+      message: isUnexpectedAmount
+        ? `Terdapat kesalahan dalam menginputkan nominal pembayaran. Nominal yang benar adalah ${formatCurrency(expectedPayable)}.`
+        : ''
+    };
   }
 
   function updatePaymentMeta() {
@@ -1307,6 +1399,7 @@ const demoData = {
       detailTitle.textContent = `Struk Pembayaran - ${payment.id}`;
       detailContent.innerHTML = `
         <div class="payment-receipt">
+          <div class="receipt-status-badge ${remaining <= 0 ? 'is-paid' : ''}">${remaining <= 0 ? 'LUNAS' : 'BELUM LUNAS'}</div>
           <div class="payment-receipt-heading">
             <span>BUKTI PENERIMAAN PEMBAYARAN</span>
             <strong>${escapeHTML(payment.id)}</strong>
@@ -1727,7 +1820,15 @@ const demoData = {
     const reportPeriodType = document.getElementById('reportPeriodType');
     const reportMonthField = document.getElementById('reportMonthField');
     reportPeriodType?.addEventListener('change', () => {
-      if (reportMonthField) reportMonthField.hidden = reportPeriodType.value === 'year';
+      if (reportMonthField) {
+        const monthSelect = document.getElementById('reportMonth');
+        const isYearly = reportPeriodType.value === 'year';
+        reportMonthField.hidden = isYearly;
+        if (monthSelect) {
+          monthSelect.disabled = isYearly;
+          monthSelect.required = !isYearly;
+        }
+      }
     });
 
     const receivablesReportForm = document.getElementById('receivablesReportForm');
@@ -1995,6 +2096,12 @@ const demoData = {
         }
 
         const discount = getDiscountOnPayment(invoiceId, paymentDateValue);
+        const validation = validatePaymentAmount(invoiceId, paymentDateValue, amount);
+        if (!validation.valid) {
+          alert(validation.message);
+          return;
+        }
+
         const remainingBefore = getInvoiceRemaining(invoiceId);
         const finalPayment = Math.min(amount, remainingBefore);
         const appliedDiscount = amount >= remainingBefore - discount
@@ -2062,6 +2169,12 @@ const demoData = {
       }
 
       const discount = getDiscountOnPayment(invoiceId, paymentDateValue);
+      const validation = validatePaymentAmount(invoiceId, paymentDateValue, amount);
+      if (!validation.valid) {
+        alert(validation.message);
+        return;
+      }
+
       const remainingBefore = getInvoiceRemaining(invoiceId);
       const finalPayment = Math.min(amount, remainingBefore);
       const appliedDiscount = amount >= remainingBefore - discount

@@ -10,7 +10,21 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <main id="accessGate" class="access-gate" aria-labelledby="accessTitle">
+      <section class="access-card">
+        <div class="access-brand">CV KOKOH</div>
+        <p class="access-eyebrow">Sistem Piutang Usaha</p>
+        <h1 id="accessTitle">Masuk ke sistem</h1>
+        <form id="accessForm" class="access-form">
+          <label for="accessPassword">Password</label>
+          <input id="accessPassword" name="password" type="password" autocomplete="current-password" required autofocus />
+          <p id="accessError" class="access-error" role="alert" hidden>Password tidak sesuai.</p>
+          <button type="submit" class="primary-btn">Masuk</button>
+        </form>
+      </section>
+    </main>
+
+    <div class="app-shell" id="appShell" hidden>
       <aside class="sidebar">
         <div class="brand-box">
           <div class="brand-mark">CK</div>
@@ -595,5 +609,34 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/app.js"></script>
+    <script>
+      (() => {
+        const sessionKey = 'piutang-access-granted';
+        const appShell = document.getElementById('appShell');
+        const accessGate = document.getElementById('accessGate');
+        const accessForm = document.getElementById('accessForm');
+        const passwordInput = document.getElementById('accessPassword');
+        const accessError = document.getElementById('accessError');
+
+        if (sessionStorage.getItem(sessionKey) === 'true') {
+          accessGate.hidden = true;
+          appShell.hidden = false;
+        }
+
+        accessForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          if (passwordInput.value !== 'SISTEMPIUTANG') {
+            accessError.hidden = false;
+            passwordInput.select();
+            return;
+          }
+
+          sessionStorage.setItem(sessionKey, 'true');
+          accessError.hidden = true;
+          accessGate.hidden = true;
+          appShell.hidden = false;
+        });
+      })();
+    </script>
   </body>
 </html>

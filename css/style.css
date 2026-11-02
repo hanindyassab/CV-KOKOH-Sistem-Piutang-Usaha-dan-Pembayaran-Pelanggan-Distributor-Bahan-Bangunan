@@ -340,6 +340,7 @@ select {
 }
 
 .bar-group {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -347,6 +348,37 @@ select {
   gap: 8px;
   flex: 1;
   height: 150px;
+  cursor: pointer;
+}
+
+.bar-group::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  z-index: 20;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
+}
+
+.bar-group:hover::after,
+.bar-group:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 .bar-stack {
@@ -1056,36 +1088,64 @@ th {
 }
 
 .payment-receipt {
+  position: relative;
   max-width: 620px;
   margin: 0 auto;
-  padding: 22px;
-  border: 1px dashed var(--muted);
-  border-radius: 8px;
-  background: #fff;
+  padding: 26px 22px 20px;
+  border: 1.5px solid rgba(15, 23, 42, 0.14);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+}
+
+.receipt-status-badge {
+  position: absolute;
+  right: 22px;
+  top: 20px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  background: #fef3c7;
+  color: #b45309;
+  border: 2px solid rgba(245, 158, 11, 0.45);
+  transform: rotate(12deg);
+  box-shadow: 0 8px 16px rgba(146, 51, 234, 0.08);
+}
+
+.receipt-status-badge.is-paid {
+  background: #fff1f2;
+  color: #b91c1c;
+  border: 3px solid rgba(185, 28, 28, 0.8);
+  box-shadow: 0 10px 18px rgba(185, 28, 28, 0.18);
+  text-transform: uppercase;
 }
 
 .payment-receipt-heading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding-bottom: 16px;
-  border-bottom: 1px dashed var(--line);
+  gap: 8px;
+  padding: 12px 0 18px;
+  border-bottom: 1.5px dashed rgba(15, 23, 42, 0.2);
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-align: center;
 }
 
 .payment-receipt-heading strong {
   color: var(--text);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
 }
 
 .payment-receipt-lines {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-top: 18px;
   padding-top: 16px;
 }
 
@@ -1878,6 +1938,81 @@ textarea {
 
 #agingTableBody .action-btn {
   padding: 7px 10px;
+}
+
+.access-gate {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(145deg, #eaf1ec 0%, #f7f8f5 55%, #e5eee7 100%);
+}
+
+.access-gate[hidden],
+.app-shell[hidden] {
+  display: none !important;
+}
+
+.access-card {
+  width: min(420px, 100%);
+  padding: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.access-brand {
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.access-eyebrow {
+  margin: 22px 0 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.access-card h1 {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+}
+
+.access-form {
+  display: grid;
+  gap: 12px;
+}
+
+.access-form label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.access-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+}
+
+.access-form input:focus {
+  outline: 2px solid var(--primary-border);
+  border-color: var(--primary);
+}
+
+.access-form .primary-btn {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+}
+
+.access-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.85rem;
 }
 
 @media (max-width: 900px) {
